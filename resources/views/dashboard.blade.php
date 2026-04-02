@@ -1,40 +1,43 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Panel | {{ config('app.name', 'Hospital Privado Malacatan') }}</title>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|outfit:500,600,700" rel="stylesheet" />
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @endif
-    </head>
-    <body class="min-h-screen bg-slate-950 text-slate-100">
-        <main class="mx-auto flex min-h-screen max-w-5xl items-center px-6 py-12">
-            <section class="w-full rounded-[2rem] border border-white/10 bg-slate-900/80 p-8 shadow-2xl shadow-slate-950/60">
-                <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="space-y-2">
-                        <p class="text-sm uppercase tracking-[0.3em] text-emerald-300">Panel de control</p>
-                        <h1 class="font-['Outfit'] text-4xl font-semibold text-white">
-                            Bienvenido, {{ auth()->user()->name }}
-                        </h1>
-                        <p class="text-slate-300">
-                            El acceso ya esta listo. Desde aqui podemos construir las siguientes vistas del sistema.
-                        </p>
-                    </div>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button
-                            type="submit"
-                            class="inline-flex items-center justify-center rounded-2xl border border-white/10 px-5 py-3 font-medium text-slate-200 transition hover:border-rose-300 hover:text-rose-200"
-                        >
-                            Cerrar sesion
-                        </button>
-                    </form>
+<x-layouts.panel title="Panel principal">
+    <section class="pt-8 sm:pt-10">
+        <div class="mt-4 border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
+            <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-center">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Panel principal</p>
+                    <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">
+                        Bienvenido, {{ auth()->user()->username }}
+                    </h1>
+                    <p class="max-w-2xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
+                        Este panel principal deja visible unicamente el acceso al modulo de usuarios para mantener una
+                        interfaz mas limpia mientras seguimos desarrollando el sistema.
+                    </p>
                 </div>
-            </section>
-        </main>
-    </body>
-</html>
+
+                <div class="flex min-h-[132px] items-center rounded-[2.2rem] border border-[#0b1b57]/10 bg-[#f4f7fb] px-5 py-4 text-sm text-[#0b1b57]">
+                    Perfil actual: <span class="font-semibold">Administrador</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8" style="margin-top: 3.5rem;">
+            <div class="grid gap-6 lg:items-center">
+                <div class="space-y-3 pt-6 sm:pt-8">
+                    <h2 class="font-['Outfit'] text-3xl font-semibold text-[#0b1b57]">Gestion de usuarios</h2>
+                    <p class="max-w-2xl text-sm leading-7 text-[#0b1b57]/70 sm:text-base">
+                        Ingresa al modulo para visualizar las acciones de crear usuario, editar usuario, listar y buscar,
+                        asi como desactivar accesos del sistema.
+                    </p>
+                </div>
+
+                <div class="pt-4">
+                    <a
+                        href="{{ route('usuarios.index') }}"
+                        class="inline-flex rounded-[1.6rem] bg-[#0b1b57] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10256f]"
+                    >
+                        Ingresar al modulo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</x-layouts.panel>

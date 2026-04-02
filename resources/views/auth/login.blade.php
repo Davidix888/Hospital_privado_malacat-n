@@ -26,38 +26,39 @@
                     @csrf
 
                     <div>
-                        <label for="email" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Usuario</label>
+                        <label for="username" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Usuario</label>
                         <input
-                            id="email"
+                            id="username"
                             type="text"
-                            name="email"
-                            value="{{ old('email') }}"
+                            name="username"
+                            value="{{ old('username') }}"
                             required
                             autofocus
                             autocomplete="username"
-                            placeholder="Usuario"
+                            placeholder="ldixquiac"
                             class="w-full rounded-2xl border border-[#0b1b57]/20 bg-[#f9fbff] px-4 py-3 text-sm text-[#0b1b57] outline-none transition focus:border-[#0b1b57] focus:ring-4 focus:ring-[#0b1b57]/10"
                         >
-                        @error('email')
+                        @error('username')
                             <p class="mt-2 text-[0.92rem] text-[#d71920]">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="password" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Contraseña</label>
+                        <label for="password" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Contrasena</label>
                         <input
                             id="password"
                             type="password"
                             name="password"
                             required
                             autocomplete="current-password"
-                            placeholder="Contraseña"
+                            placeholder="Contrasena"
                             class="w-full rounded-2xl border border-[#0b1b57]/20 bg-[#f9fbff] px-4 py-3 text-sm text-[#0b1b57] outline-none transition focus:border-[#0b1b57] focus:ring-4 focus:ring-[#0b1b57]/10"
                         >
                         @error('password')
                             <p class="mt-2 text-[0.92rem] text-[#d71920]">{{ $message }}</p>
                         @enderror
-                    </div> 
+                    </div>
+
                     <button
                         type="submit"
                         class="w-full rounded-2xl bg-[#0b1b57] px-[18px] py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#10256f] hover:shadow-[0_14px_24px_rgba(11,27,87,0.18)]"

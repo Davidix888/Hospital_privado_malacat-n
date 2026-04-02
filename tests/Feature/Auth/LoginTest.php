@@ -25,7 +25,7 @@ class LoginTest extends TestCase
         ]);
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'username' => $user->username,
             'password' => 'password',
         ]);
 
@@ -38,12 +38,12 @@ class LoginTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->from('/login')->post('/login', [
-            'email' => $user->email,
+            'username' => $user->username,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
         $response->assertRedirect('/login');
-        $response->assertSessionHasErrors('email');
+        $response->assertSessionHasErrors('username');
     }
 }

@@ -17,21 +17,20 @@ class AuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ], [
-            'email.required' => 'El correo es obligatorio.',
-            'email.email' => 'Ingresa un correo valido.',
+            'username.required' => 'El usuario es obligatorio.',
             'password.required' => 'La contrasena es obligatoria.',
         ]);
 
-        $remember = $request->boolean('remember');
+        $credentials['estado'] = true;
 
-        if (! Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($credentials)) {
             return back()
-                ->withInput($request->only('email', 'remember'))
+                ->withInput($request->only('username'))
                 ->withErrors([
-                    'email' => 'Las credenciales no coinciden con nuestros registros.',
+                    'username' => 'Las credenciales no coinciden con nuestros registros o el usuario esta inactivo.',
                 ]);
         }
 
