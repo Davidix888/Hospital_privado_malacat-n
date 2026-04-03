@@ -35,7 +35,7 @@
                             required
                             autofocus
                             autocomplete="username"
-                            placeholder="ldixquiac"
+                            placeholder="Usuario"
                             class="w-full rounded-2xl border border-[#0b1b57]/20 bg-[#f9fbff] px-4 py-3 text-sm text-[#0b1b57] outline-none transition focus:border-[#0b1b57] focus:ring-4 focus:ring-[#0b1b57]/10"
                         >
                         @error('username')
@@ -44,14 +44,14 @@
                     </div>
 
                     <div>
-                        <label for="password" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Contrasena</label>
+                        <label for="password" class="mb-1.5 block text-sm font-semibold text-[#0b1b57]">Contraseña</label>
                         <input
                             id="password"
                             type="password"
                             name="password"
                             required
                             autocomplete="current-password"
-                            placeholder="Contrasena"
+                            placeholder="Contraseña"
                             class="w-full rounded-2xl border border-[#0b1b57]/20 bg-[#f9fbff] px-4 py-3 text-sm text-[#0b1b57] outline-none transition focus:border-[#0b1b57] focus:ring-4 focus:ring-[#0b1b57]/10"
                         >
                         @error('password')
