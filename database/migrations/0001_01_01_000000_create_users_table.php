@@ -11,6 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('cargo', function (Blueprint $table) {
+            $table->id('id_cargo');
+            $table->string('nombre', 80)->unique();
+            $table->string('descripcion')->nullable();
+        });
+
+        Schema::create('empleado', function (Blueprint $table) {
+            $table->id('id_empleado');
+            $table->unsignedBigInteger('id_cargo');
+            $table->string('nombres', 80);
+            $table->string('apellidos', 80);
+            $table->char('dpi', 13)->unique();
+            $table->string('direccion', 150);
+            $table->boolean('estado')->default(true);
+
+            $table->foreign('id_cargo')->references('id_cargo')->on('cargo');
+        });
+
+        Schema::create('rol', function (Blueprint $table) {
+            $table->id('id_rol');
+            $table->string('nombre', 50)->unique();
+            $table->string('descripcion')->nullable();
+        });
+
         Schema::create('usuario', function (Blueprint $table) {
             $table->id('id_usuario');
             $table->unsignedInteger('id_empleado')->unique();
@@ -19,6 +43,9 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('estado')->default(true);
             $table->timestamp('fecha_creacion')->useCurrent();
+
+            $table->foreign('id_empleado')->references('id_empleado')->on('empleado');
+            $table->foreign('id_rol')->references('id_rol')->on('rol');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -43,6 +70,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('usuario');
+        Schema::dropIfExists('rol');
+        Schema::dropIfExists('empleado');
+        Schema::dropIfExists('cargo');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

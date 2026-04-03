@@ -1,0 +1,57 @@
+<?php
+
+return [
+    'roles' => [
+        'administrador' => [
+            'usuarios.manage',
+            'laboratorio.view',
+            'farmacia.view',
+            'resumenes.view',
+            'resumenes.export',
+        ],
+        'laboratorio' => [
+            'laboratorio.view',
+        ],
+        'farmacia' => [
+            'farmacia.view',
+        ],
+        'licenciado' => [
+            'resumenes.view',
+            'resumenes.export',
+        ],
+    ],
+    'modules' => [
+        [
+            'ability' => 'usuarios.manage',
+            'title' => 'Gestion de usuarios',
+            'description' => 'Administra usuarios, cambia roles, actualiza datos y controla accesos al sistema.',
+            'route' => 'usuarios.index',
+            'button' => 'Ingresar al modulo',
+            'badge' => 'Modulo administrativo',
+        ],
+        [
+            'ability' => 'laboratorio.view',
+            'title' => 'Modulo de laboratorio',
+            'description' => 'Consulta y gestiona los procesos operativos del laboratorio segun el rol asignado.',
+            'route' => 'laboratorio.index',
+            'button' => 'Ingresar al modulo',
+            'badge' => 'Modulo operativo',
+        ],
+        [
+            'ability' => 'farmacia.view',
+            'title' => 'Modulo de farmacia',
+            'description' => 'Accede a las operaciones del area de farmacia con visibilidad controlada por rol.',
+            'route' => 'farmacia.index',
+            'button' => 'Ingresar al modulo',
+            'badge' => 'Modulo operativo',
+        ],
+        [
+            'ability' => 'resumenes.view',
+            'title' => 'Resumenes y exportacion',
+            'description' => 'Consulta resumenes generales y exporta informacion cuando tu rol lo permita.',
+            'route' => 'resumenes.index',
+            'button' => 'Ingresar al modulo',
+            'badge' => 'Modulo de reportes',
+        ],
+    ],
+];
