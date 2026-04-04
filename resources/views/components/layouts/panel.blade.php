@@ -18,7 +18,10 @@
             <div class="relative z-10 flex min-h-screen flex-col">
                 <header class="border-b border-[#0b1b57]/10 bg-[#0b1b57] text-white">
                     <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-                        <div class="flex items-center gap-4">
+                        <a
+                            href="{{ route('dashboard') }}"
+                            class="flex items-center gap-4 rounded-2xl transition hover:bg-white/10"
+                        >
                             <img
                                 src="{{ asset('imagenes/Logo_Hospital.jpeg') }}"
                                 alt="Logo Hospital Privado Malacatan"
@@ -28,7 +31,7 @@
                                 <p class="font-['Outfit'] text-xl font-semibold tracking-wide">Hospital Privado Malacatan</p>
                                 <p class="text-sm text-white/75">Modulo administrativo</p>
                             </div>
-                        </div>
+                        </a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

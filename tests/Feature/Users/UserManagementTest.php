@@ -114,6 +114,27 @@ class UserManagementTest extends TestCase
         ]);
     }
 
+    public function test_administrator_can_reactivate_an_inactive_user(): void
+    {
+        $admin = $this->createAdministrator();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+        $user = User::factory()->create([
+            'id_rol' => $role->id_rol,
+            'estado' => false,
+        ]);
+
+        $response = $this->actingAs($admin)->patch('/usuarios/'.$user->id_usuario.'/activar');
+
+        $response->assertRedirect('/usuarios/desactivar');
+
+        $this->assertDatabaseHas('usuario', [
+            'id_usuario' => $user->id_usuario,
+            'estado' => true,
+        ]);
+    }
+
     public function test_non_administrator_cannot_access_user_module(): void
     {
         $labRole = Role::factory()->create([

@@ -23,7 +23,7 @@ return [
     'modules' => [
         [
             'ability' => 'usuarios.manage',
-            'title' => 'Gestion de usuarios',
+            'title' => 'Gestión de usuarios',
             'description' => 'Administra usuarios, cambia roles, actualiza datos y controla accesos al sistema.',
             'route' => 'usuarios.index',
             'button' => 'Ingresar al modulo',
@@ -31,7 +31,7 @@ return [
         ],
         [
             'ability' => 'laboratorio.view',
-            'title' => 'Modulo de laboratorio',
+            'title' => 'Módulo de laboratorio',
             'description' => 'Consulta y gestiona los procesos operativos del laboratorio segun el rol asignado.',
             'route' => 'laboratorio.index',
             'button' => 'Ingresar al modulo',
@@ -39,7 +39,7 @@ return [
         ],
         [
             'ability' => 'farmacia.view',
-            'title' => 'Modulo de farmacia',
+            'title' => 'Módulo de farmacia',
             'description' => 'Accede a las operaciones del area de farmacia con visibilidad controlada por rol.',
             'route' => 'farmacia.index',
             'button' => 'Ingresar al modulo',
@@ -47,8 +47,8 @@ return [
         ],
         [
             'ability' => 'resumenes.view',
-            'title' => 'Resumenes y exportacion',
-            'description' => 'Consulta resumenes generales y exporta informacion cuando tu rol lo permita.',
+            'title' => 'Resumenes generales',
+            'description' => 'Consulta resumenes generales y exporta informacion.',
             'route' => 'resumenes.index',
             'button' => 'Ingresar al modulo',
             'badge' => 'Modulo de reportes',

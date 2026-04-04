@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function (): void {
             Route::put('/{user}', 'update')->name('update');
             Route::get('/desactivar', 'deactivateIndex')->name('deactivate.index');
             Route::patch('/{user}/desactivar', 'deactivate')->name('deactivate');
+            Route::patch('/{user}/activar', 'reactivate')->name('reactivate');
         });
     Route::view('/laboratorio', 'laboratorio.index')
         ->middleware('can:laboratorio.view')
