@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,9 +34,23 @@ Route::middleware('auth')->group(function (): void {
     Route::view('/laboratorio', 'laboratorio.index')
         ->middleware('can:laboratorio.view')
         ->name('laboratorio.index');
-    Route::view('/farmacia', 'farmacia.index')
+    Route::prefix('farmacia')
         ->middleware('can:farmacia.view')
-        ->name('farmacia.index');
+        ->name('farmacia.')
+        ->controller(PharmacyController::class)
+        ->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('/medicamentos', 'medicines')->name('medicines.index');
+            Route::get('/medicamentos/crear', 'createMedicine')->name('medicines.create');
+            Route::post('/medicamentos', 'storeMedicine')->name('medicines.store');
+            Route::get('/proveedores', 'suppliers')->name('suppliers.index');
+            Route::get('/proveedores/crear', 'createSupplier')->name('suppliers.create');
+            Route::post('/proveedores', 'storeSupplier')->name('suppliers.store');
+            Route::get('/compras', 'purchases')->name('purchases.index');
+            Route::get('/compras/crear', 'createPurchase')->name('purchases.create');
+            Route::post('/compras', 'storePurchase')->name('purchases.store');
+            Route::get('/inventario', 'inventory')->name('inventory.index');
+        });
     Route::view('/resumenes', 'resumenes.index')
         ->middleware('can:resumenes.view')
         ->name('resumenes.index');
