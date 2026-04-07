@@ -16,7 +16,7 @@
             $notificationButtonClasses = null;
 
             if (session('error') || $errors->any()) {
-                $notificationMessage = $notificationMessage ?? $errors->first();
+                $notificationMessage = $notificationMessage ?? 'Revisa los datos del formulario antes de guardar.';
                 $notificationTitle = session('error_title', 'No se pudo completar la acción');
                 $notificationClasses = 'border-red-200 bg-red-50 text-red-700';
                 $notificationButtonClasses = 'text-red-700/70 hover:text-red-700';
@@ -38,12 +38,12 @@
                         >
                             <img
                                 src="{{ asset('imagenes/Logo_Hospital.jpeg') }}"
-                                alt="Logo Hospital Privado Malacat&aacute;n"
+                                alt="Logo Hospital Privado Malacatán"
                                 class="h-14 w-14 rounded-2xl bg-white object-contain p-1.5 shadow-sm"
                             >
                             <div>
-                                <p class="font-['Outfit'] text-xl font-semibold tracking-wide">Hospital Privado Malacat&aacute;n</p>
-                                <p class="text-sm text-white/75">M&oacute;dulo administrativo</p>
+                                <p class="font-['Outfit'] text-xl font-semibold tracking-wide">Hospital Privado Malacatán</p>
+                                <p class="text-sm text-white/75">Módulo administrativo</p>
                             </div>
                         </a>
 
@@ -53,7 +53,7 @@
                                 type="submit"
                                 class="rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
                             >
-                                Cerrar sesi&oacute;n
+                                Cerrar sesión
                             </button>
                         </form>
                     </div>
@@ -75,7 +75,7 @@
                                     class="text-lg font-semibold leading-none transition {{ $notificationButtonClasses }}"
                                     onclick="document.getElementById('panel-notification')?.remove()"
                                 >
-                                    x
+                                    &times;
                                 </button>
                             </div>
                         </div>

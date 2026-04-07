@@ -1,19 +1,24 @@
 <x-layouts.panel title="Crear usuario">
     <section style="padding-top: 2rem;">
         <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
-            <div class="space-y-3">
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Crear usuario</p>
-                <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Registro de usuario</h1>
-                <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                    Registro del empleado y creaci&oacute;n de su cuenta de usuario.
-                </p>
-            </div>
-
-            @if (session('error') || $errors->any())
-                <div class="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {{ session('error', 'Revisa los datos del formulario antes de guardar.') }}
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Usuarios</p>
+                    <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Registrar usuario</h1>
+                    <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
+                        Registra al empleado y crea su cuenta de acceso dentro del sistema.
+                    </p>
                 </div>
-            @endif
+
+                <div class="flex gap-3 lg:justify-end">
+                    <a
+                        href="{{ route('usuarios.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Volver a usuarios
+                    </a>
+                </div>
+            </div>
 
             <form method="POST" action="{{ route('usuarios.store') }}" class="mt-8 grid gap-8">
                 @csrf
@@ -22,7 +27,7 @@
                     <div class="border border-[#0b1b57]/10 p-5">
                         <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">1. Datos del empleado</h2>
                         <p class="mt-2 text-sm leading-6 text-[#0b1b57]/70">
-                            Llena los datos del empleado que se registrar&aacute; junto con el usuario.
+                            Llena los datos del empleado que se registrará junto con el usuario.
                         </p>
 
                         <div class="mt-5 grid gap-4">
@@ -43,7 +48,7 @@
 
                             <div>
                                 <label for="apellidos" class="text-sm font-medium text-[#0b1b57]">Apellidos</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingrese el apellido del empleado.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el apellido del empleado.</p>
                                 <input
                                     id="apellidos"
                                     name="apellidos"
@@ -58,7 +63,7 @@
 
                             <div>
                                 <label for="dpi" class="text-sm font-medium text-[#0b1b57]">DPI</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingrese el n&uacute;mero de DPI del empleado.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el número de DPI del empleado.</p>
                                 <input
                                     id="dpi"
                                     name="dpi"
@@ -68,7 +73,7 @@
                                     maxlength="13"
                                     inputmode="numeric"
                                     pattern="[0-9]{13}"
-                                    placeholder="Ej: 1234567890123"
+                                    placeholder="Ejemplo: 1234567890123"
                                 >
                                 @error('dpi')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -76,8 +81,8 @@
                             </div>
 
                             <div>
-                                <label for="direccion" class="text-sm font-medium text-[#0b1b57]">Direcci&oacute;n</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingrese la direcci&oacute;n del empleado.</p>
+                                <label for="direccion" class="text-sm font-medium text-[#0b1b57]">Dirección</label>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa la dirección del empleado.</p>
                                 <input
                                     id="direccion"
                                     name="direccion"
@@ -101,13 +106,13 @@
                         <div class="mt-5 grid gap-4">
                             <div>
                                 <label for="id_cargo" class="text-sm font-medium text-[#0b1b57]">Cargo existente</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Seleccione un cargo.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Selecciona un cargo.</p>
                                 <select
                                     id="id_cargo"
                                     name="id_cargo"
                                     class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
                                 >
-                                    <option value="">Seleccione un cargo</option>
+                                    <option value="">Selecciona un cargo</option>
                                     @foreach ($cargos as $cargo)
                                         <option value="{{ $cargo->id_cargo }}" @selected(old('id_cargo') == $cargo->id_cargo)>
                                             {{ $cargo->nombre }}
@@ -121,14 +126,14 @@
 
                             <div>
                                 <label for="cargo_nombre" class="text-sm font-medium text-[#0b1b57]">Nuevo cargo</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingrese el nombre del nuevo cargo.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el nombre del nuevo cargo.</p>
                                 <input
                                     id="cargo_nombre"
                                     name="cargo_nombre"
                                     type="text"
                                     value="{{ old('cargo_nombre') }}"
                                     class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
-                                    placeholder="Ejemplo: T&eacute;cnico de laboratorio"
+                                    placeholder="Ejemplo: Técnico de laboratorio"
                                 >
                                 @error('cargo_nombre')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -136,7 +141,7 @@
                             </div>
 
                             <div>
-                                <label for="cargo_descripcion" class="text-sm font-medium text-[#0b1b57]">Descripci&oacute;n</label>
+                                <label for="cargo_descripcion" class="text-sm font-medium text-[#0b1b57]">Descripción</label>
                                 <p class="mt-1 text-xs text-[#0b1b57]/60">Este campo es opcional y ayuda a describir mejor el cargo.</p>
                                 <input
                                     id="cargo_descripcion"
@@ -156,7 +161,7 @@
                         <div class="mt-5 grid gap-4">
                             <div>
                                 <label for="id_rol" class="text-sm font-medium text-[#0b1b57]">Rol</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Selecciona el rol, permisos para ver m&oacute;dulos.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Selecciona el rol con permisos para ver módulos.</p>
                                 <select
                                     id="id_rol"
                                     name="id_rol"
@@ -176,7 +181,7 @@
 
                             <div>
                                 <label for="username" class="text-sm font-medium text-[#0b1b57]">Nombre de usuario</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Usa un nombre &uacute;nico, sin repetir. Ej: ldixquiac.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Usa un nombre único, sin repetir. Ejemplo: ldixquiac.</p>
                                 <input
                                     id="username"
                                     name="username"
@@ -191,7 +196,7 @@
                             </div>
 
                             <div>
-                                <label for="password" class="text-sm font-medium text-[#0b1b57]">Contrase&ntilde;a</label>
+                                <label for="password" class="text-sm font-medium text-[#0b1b57]">Contraseña</label>
                                 <p class="mt-1 text-xs text-[#0b1b57]/60">Debe tener al menos 8 caracteres.</p>
                                 <input
                                     id="password"
@@ -205,8 +210,8 @@
                             </div>
 
                             <div>
-                                <label for="password_confirmation" class="text-sm font-medium text-[#0b1b57]">Confirmar contrase&ntilde;a</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Escribe nuevamente la contrase&ntilde;a para confirmar el registro.</p>
+                                <label for="password_confirmation" class="text-sm font-medium text-[#0b1b57]">Confirmar contraseña</label>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Escribe nuevamente la contraseña para confirmar el registro.</p>
                                 <input
                                     id="password_confirmation"
                                     name="password_confirmation"
@@ -218,14 +223,14 @@
                     </div>
 
                     <div class="border border-[#0b1b57]/10 p-5">
-                        <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">4. Activaci&oacute;n</h2>
+                        <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">4. Activación</h2>
                         <p class="mt-2 text-sm leading-6 text-[#0b1b57]/70">
-                            Indicar si se desea habilitar el usuario al crearlo.
+                            Indica si se desea habilitar el usuario al crearlo.
                         </p>
 
                         <div class="mt-5">
                             <label for="estado" class="text-sm font-medium text-[#0b1b57]">Estado del usuario</label>
-                            <p class="mt-1 text-xs text-[#0b1b57]/60">Elige si el usuario podr&aacute; ingresar al sistema desde el momento en que se cree.</p>
+                            <p class="mt-1 text-xs text-[#0b1b57]/60">Elige si el usuario podrá ingresar al sistema desde el momento en que se cree.</p>
                             <select
                                 id="estado"
                                 name="estado"
@@ -252,7 +257,7 @@
                         href="{{ route('usuarios.index') }}"
                         class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
                     >
-                        Volver al men&uacute;
+                        Cancelar
                     </a>
                 </div>
             </form>

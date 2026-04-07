@@ -1,34 +1,48 @@
-<x-layouts.panel title="Gestionar estado de usuarios">
+<x-layouts.panel title="Gestión del estado de usuarios">
     <section style="padding-top: 2rem;">
-        <div class="mb-6 flex justify-end">
-            <a
-                href="{{ route('usuarios.index') }}"
-                class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+        @if (session('status'))
+            <div
+                id="user-status-popup"
+                class="fixed right-6 top-24 z-50 max-w-sm border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 shadow-xl"
             >
-                Volver al men&uacute;
-            </a>
-        </div>
+                <div class="flex items-start justify-between gap-4">
+                    <div class="space-y-1">
+                        <p class="font-semibold">Proceso completado</p>
+                        <p>{{ session('status') }}</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="text-lg font-semibold leading-none text-emerald-700/70 transition hover:text-emerald-700"
+                        onclick="document.getElementById('user-status-popup')?.remove()"
+                    >
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <script>
+                setTimeout(() => document.getElementById('user-status-popup')?.remove(), 5000);
+            </script>
+        @endif
 
         <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
-            <div class="space-y-3">
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Activar y desactivar</p>
-                <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Control de accesos</h1>
-                <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                    Gestiona el estado de los usuarios sin eliminar su informaci&oacute;n ni su historial dentro del sistema.
-                </p>
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Usuarios</p>
+                    <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Control de accesos</h1>
+                    <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
+                        Gestiona el estado de los usuarios sin eliminar su información ni su historial dentro del sistema.
+                    </p>
+                </div>
+
+                <div class="flex gap-3 lg:justify-end">
+                    <a
+                        href="{{ route('usuarios.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Volver a usuarios
+                    </a>
+                </div>
             </div>
-
-            @if (session('status'))
-                <div class="mt-6 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {{ $errors->first() }}
-                </div>
-            @endif
 
             <form method="GET" action="{{ route('usuarios.deactivate.index') }}" class="mt-8 grid gap-4 lg:grid-cols-4">
                 <input
@@ -84,7 +98,7 @@
                             <th class="w-[28%] px-4 py-3 text-center font-semibold align-middle">Empleado</th>
                             <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Rol</th>
                             <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
-                            <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Acci&oacute;n</th>
+                            <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,33 +114,33 @@
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle">
                                     @if ($user->estado && ! auth()->user()->is($user))
-                                        <form method="POST" action="{{ route('usuarios.deactivate', $user) }}" style="display: flex; justify-content: center;">
+                                        <form method="POST" action="{{ route('usuarios.deactivate', $user) }}" class="flex justify-center">
                                             @csrf
                                             @method('PATCH')
                                             <button
                                                 type="submit"
-                                                style="min-width: 118px; border-radius: 1rem; background: #dc2626; color: #ffffff; padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 600;"
+                                                class="inline-flex min-w-[118px] items-center justify-center rounded-[1rem] bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
                                             >
                                                 Desactivar
                                             </button>
                                         </form>
                                     @elseif ($user->estado)
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-center">
                                             <button
                                                 type="button"
                                                 disabled
-                                                style="min-width: 118px; border-radius: 1rem; background: #cbd5e1; color: #334155; padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 600; cursor: not-allowed;"
+                                                class="inline-flex min-w-[118px] cursor-not-allowed items-center justify-center rounded-[1rem] bg-slate-300 px-4 py-2 text-xs font-semibold text-slate-700"
                                             >
                                                 Usuario actual
                                             </button>
                                         </div>
                                     @else
-                                        <form method="POST" action="{{ route('usuarios.reactivate', $user) }}" style="display: flex; justify-content: center;">
+                                        <form method="POST" action="{{ route('usuarios.reactivate', $user) }}" class="flex justify-center">
                                             @csrf
                                             @method('PATCH')
                                             <button
                                                 type="submit"
-                                                style="min-width: 118px; border-radius: 1rem; background: #059669; color: #ffffff; padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 600;"
+                                                class="inline-flex min-w-[118px] items-center justify-center rounded-[1rem] bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
                                             >
                                                 Activar
                                             </button>
