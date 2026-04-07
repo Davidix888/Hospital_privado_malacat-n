@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 
 class UserManagementController extends Controller
 {
@@ -42,40 +43,50 @@ class UserManagementController extends Controller
     {
         $validated = $request->validated();
 
-        DB::transaction(function () use ($validated, $request): void {
-            $cargoId = $validated['id_cargo'] ?? null;
+        try {
+            DB::transaction(function () use ($validated, $request): void {
+                $cargoId = $validated['id_cargo'] ?? null;
 
-            if (! $cargoId) {
-                $cargo = Cargo::firstOrCreate(
-                    ['nombre' => trim($validated['cargo_nombre'])],
-                    ['descripcion' => $validated['cargo_descripcion'] ?? null],
-                );
+                if (! $cargoId) {
+                    $cargo = Cargo::firstOrCreate(
+                        ['nombre' => trim($validated['cargo_nombre'])],
+                        ['descripcion' => $validated['cargo_descripcion'] ?? null],
+                    );
 
-                $cargoId = $cargo->id_cargo;
-            }
+                    $cargoId = $cargo->id_cargo;
+                }
 
-            $employee = Employee::create([
-                'id_cargo' => (int) $cargoId,
-                'nombres' => trim($validated['nombres']),
-                'apellidos' => trim($validated['apellidos']),
-                'dpi' => trim($validated['dpi']),
-                'direccion' => trim($validated['direccion']),
-                'estado' => true,
-            ]);
+                $employee = Employee::create([
+                    'id_cargo' => (int) $cargoId,
+                    'nombres' => trim($validated['nombres']),
+                    'apellidos' => trim($validated['apellidos']),
+                    'dpi' => trim($validated['dpi']),
+                    'direccion' => trim($validated['direccion']),
+                    'estado' => true,
+                ]);
 
-            User::create([
-                'id_empleado' => (int) $employee->id_empleado,
-                'id_rol' => (int) $validated['id_rol'],
-                'username' => $validated['username'],
-                'password' => $validated['password'],
-                'estado' => $request->boolean('estado'),
-                'fecha_creacion' => now(),
-            ]);
-        });
+                User::create([
+                    'id_empleado' => (int) $employee->id_empleado,
+                    'id_rol' => (int) $validated['id_rol'],
+                    'username' => $validated['username'],
+                    'password' => $validated['password'],
+                    'estado' => $request->boolean('estado'),
+                    'fecha_creacion' => now(),
+                ]);
+            });
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error_title', 'No se pudo crear el usuario')
+                ->with('error', 'No se pudo crear el usuario. Verifica los datos e intenta nuevamente.');
+        }
 
         return redirect()
             ->route('usuarios.list')
-            ->with('status', 'Usuario creado correctamente.');
+            ->with('status_title', 'Usuario creado correctamente')
+            ->with('status', 'El usuario se creó correctamente.');
     }
 
     public function list(Request $request): View
@@ -115,23 +126,34 @@ class UserManagementController extends Controller
             $payload['password'] = $validated['password'];
         }
 
-        $user->update($payload);
+        try {
+            if (! $user->update($payload)) {
+                throw new \RuntimeException('No se pudo actualizar el usuario.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error_title', 'No se pudo editar el usuario')
+                ->with('error', 'No se pudo editar el usuario. Verifica los datos e intenta nuevamente.');
+        }
 
         return redirect()
             ->route('usuarios.list')
-            ->with('status', 'Usuario actualizado correctamente.');
+            ->with('status_title', 'Usuario editado correctamente')
+            ->with('status', 'El usuario se editó correctamente.');
     }
 
     public function deactivateIndex(Request $request): View
     {
         $users = $this->usersQuery($request)
-            ->where('estado', true)
             ->paginate(10)
             ->withQueryString();
 
         return view('usuarios.deactivate', [
             'users' => $users,
-            'filters' => $request->only(['q', 'rol']),
+            'filters' => $request->only(['q', 'rol', 'estado']),
             'roles' => $this->roles(),
         ]);
     }
@@ -151,6 +173,17 @@ class UserManagementController extends Controller
         return redirect()
             ->route('usuarios.deactivate.index')
             ->with('status', 'Usuario desactivado correctamente.');
+    }
+
+    public function reactivate(User $user): RedirectResponse
+    {
+        $user->update([
+            'estado' => true,
+        ]);
+
+        return redirect()
+            ->route('usuarios.deactivate.index')
+            ->with('status', 'Usuario activado correctamente.');
     }
 
     private function usersQuery(Request $request)
