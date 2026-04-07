@@ -15,7 +15,7 @@ class LoginTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertOk();
-        $response->assertSee('Inicio de sesion');
+        $response->assertSee('Inicio de sesi&oacute;n', false);
     }
 
     public function test_user_can_authenticate_from_login_screen(): void

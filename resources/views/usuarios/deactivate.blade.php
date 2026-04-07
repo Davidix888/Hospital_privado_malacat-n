@@ -1,11 +1,20 @@
 <x-layouts.panel title="Gestionar estado de usuarios">
     <section style="padding-top: 2rem;">
+        <div class="mb-6 flex justify-end">
+            <a
+                href="{{ route('usuarios.index') }}"
+                class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+            >
+                Volver al men&uacute;
+            </a>
+        </div>
+
         <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
             <div class="space-y-3">
                 <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Activar y desactivar</p>
                 <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Control de accesos</h1>
                 <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                    Gestiona el estado de los usuarios sin eliminar su informacion ni su historial dentro del sistema.
+                    Gestiona el estado de los usuarios sin eliminar su informaci&oacute;n ni su historial dentro del sistema.
                 </p>
             </div>
 
@@ -75,7 +84,7 @@
                             <th class="w-[28%] px-4 py-3 text-center font-semibold align-middle">Empleado</th>
                             <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Rol</th>
                             <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
-                            <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Accion</th>
+                            <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Acci&oacute;n</th>
                         </tr>
                     </thead>
                     <tbody>

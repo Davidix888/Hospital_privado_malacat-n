@@ -8,7 +8,7 @@
                         Bienvenido, {{ auth()->user()->username }}
                     </h1>
                     <p class="max-w-2xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                        Este panel muestra unicamente los modulos habilitados para tu rol, para mantener un acceso
+                        Este panel muestra &uacute;nicamente los m&oacute;dulos habilitados para tu rol, para mantener un acceso
                         claro y controlado dentro del sistema.
                     </p>
                 </div>
@@ -44,9 +44,9 @@
             </div>
         @else
             <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8" style="margin-top: 1.50rem; margin-bottom: 1.50rem;">
-                <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">Sin modulos disponibles</h2>
+                <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">Sin m&oacute;dulos disponibles</h2>
                 <p class="mt-3 max-w-2xl text-sm leading-7 text-[#0b1b57]/70 sm:text-base">
-                    Tu rol todavia no tiene modulos habilitados. Cuando se te asigne un permiso, aqui aparecera el acceso.
+                    Tu rol todav&iacute;a no tiene m&oacute;dulos habilitados. Cuando se te asigne un permiso, aqu&iacute; aparecer&aacute; el acceso.
                 </p>
             </div>
         @endif

@@ -79,12 +79,14 @@ class UserManagementController extends Controller
 
             return back()
                 ->withInput()
+                ->with('error_title', 'No se pudo crear el usuario')
                 ->with('error', 'No se pudo crear el usuario. Verifica los datos e intenta nuevamente.');
         }
 
         return redirect()
             ->route('usuarios.list')
-            ->with('status', 'Usuario creado correctamente.');
+            ->with('status_title', 'Usuario creado correctamente')
+            ->with('status', 'El usuario se creó correctamente.');
     }
 
     public function list(Request $request): View
@@ -124,11 +126,23 @@ class UserManagementController extends Controller
             $payload['password'] = $validated['password'];
         }
 
-        $user->update($payload);
+        try {
+            if (! $user->update($payload)) {
+                throw new \RuntimeException('No se pudo actualizar el usuario.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error_title', 'No se pudo editar el usuario')
+                ->with('error', 'No se pudo editar el usuario. Verifica los datos e intenta nuevamente.');
+        }
 
         return redirect()
             ->route('usuarios.list')
-            ->with('status', 'Usuario actualizado correctamente.');
+            ->with('status_title', 'Usuario editado correctamente')
+            ->with('status', 'El usuario se editó correctamente.');
     }
 
     public function deactivateIndex(Request $request): View

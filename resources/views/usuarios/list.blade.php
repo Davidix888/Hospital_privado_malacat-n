@@ -7,7 +7,7 @@
             >
                 <div class="flex items-start justify-between gap-4">
                     <div class="space-y-1">
-                        <p class="font-semibold">Usuario creado correctamente</p>
+                        <p class="font-semibold">{{ session('status_title', 'Operación completada') }}</p>
                         <p>{{ session('status') }}</p>
                     </div>
                     <button
@@ -30,16 +30,22 @@
                     <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Listar y buscar</p>
                     <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Usuarios registrados</h1>
                     <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                        Busca usuarios por nombre, username o rol y accede rapidamente a la edicion de sus datos.
+                        Busca usuarios por nombre, username o rol y accede r&aacute;pidamente a la edici&oacute;n de sus datos.
                     </p>
                 </div>
 
-                <div class="flex lg:justify-end">
+                <div class="flex flex-wrap gap-3 lg:justify-end">
                     <a
                         href="{{ route('usuarios.create') }}"
                         class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] bg-[#0b1b57] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10256f]"
                     >
                         Nuevo usuario
+                    </a>
+                    <a
+                        href="{{ route('usuarios.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Volver al men&uacute;
                     </a>
                 </div>
             </div>

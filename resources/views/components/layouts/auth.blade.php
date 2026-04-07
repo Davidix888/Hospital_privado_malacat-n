@@ -21,7 +21,7 @@
 
             <div class="relative z-10 grid min-h-screen grid-rows-[auto_1fr_auto] px-3 py-3 sm:px-4 sm:py-4">
                 <header class="mx-auto w-full max-w-5xl rounded-[1.35rem] border border-[#091342] bg-[#0b1b57] px-5 py-3 text-center text-white shadow-[0_12px_28px_rgba(11,27,87,0.16)] sm:px-6 sm:py-4">
-                    <h2 class="font-['Outfit'] text-xl font-bold tracking-[0.03em] sm:text-[1.7rem]">Hospital Privado Malacatán</h2>
+                    <h2 class="font-['Outfit'] text-xl font-bold tracking-[0.03em] sm:text-[1.7rem]">Hospital Privado Malacat&aacute;n</h2>
                     <p class="mt-1 text-xs text-white/85 sm:text-sm">Nuestro compromiso es con la vida</p>
                 </header>
 

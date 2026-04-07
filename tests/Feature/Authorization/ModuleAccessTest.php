@@ -18,10 +18,10 @@ class ModuleAccessTest extends TestCase
         $this->actingAs($user)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSee('Gestion de usuarios')
-            ->assertSee('Modulo de laboratorio')
-            ->assertSee('Modulo de farmacia')
-            ->assertSee('Resumenes y exportacion');
+            ->assertSeeText('Gestión de usuarios')
+            ->assertSeeText('Módulo de laboratorio')
+            ->assertSeeText('Módulo de farmacia')
+            ->assertSeeText('Resúmenes generales');
 
         $this->actingAs($user)->get('/usuarios')->assertOk();
         $this->actingAs($user)->get('/laboratorio')->assertOk();
@@ -37,10 +37,10 @@ class ModuleAccessTest extends TestCase
         $this->actingAs($user)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSee('Modulo de laboratorio')
-            ->assertDontSee('Gestion de usuarios')
-            ->assertDontSee('Modulo de farmacia')
-            ->assertDontSee('Resumenes y exportacion');
+            ->assertSeeText('Módulo de laboratorio')
+            ->assertDontSeeText('Gestión de usuarios')
+            ->assertDontSeeText('Módulo de farmacia')
+            ->assertDontSeeText('Resúmenes generales');
 
         $this->actingAs($user)->get('/laboratorio')->assertOk();
         $this->actingAs($user)->get('/usuarios')->assertForbidden();
@@ -55,10 +55,10 @@ class ModuleAccessTest extends TestCase
         $this->actingAs($user)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSee('Modulo de farmacia')
-            ->assertDontSee('Gestion de usuarios')
-            ->assertDontSee('Modulo de laboratorio')
-            ->assertDontSee('Resumenes y exportacion');
+            ->assertSeeText('Módulo de farmacia')
+            ->assertDontSeeText('Gestión de usuarios')
+            ->assertDontSeeText('Módulo de laboratorio')
+            ->assertDontSeeText('Resúmenes generales');
 
         $this->actingAs($user)->get('/farmacia')->assertOk();
         $this->actingAs($user)->get('/usuarios')->assertForbidden();
@@ -73,10 +73,10 @@ class ModuleAccessTest extends TestCase
         $this->actingAs($user)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSee('Resumenes y exportacion')
-            ->assertDontSee('Gestion de usuarios')
-            ->assertDontSee('Modulo de laboratorio')
-            ->assertDontSee('Modulo de farmacia');
+            ->assertSeeText('Resúmenes generales')
+            ->assertDontSeeText('Gestión de usuarios')
+            ->assertDontSeeText('Módulo de laboratorio')
+            ->assertDontSeeText('Módulo de farmacia');
 
         $this->actingAs($user)->get('/resumenes')->assertOk();
         $this->actingAs($user)->get('/resumenes/exportar')->assertOk();

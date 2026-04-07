@@ -19,7 +19,8 @@ class UserManagementTest extends TestCase
         $this->actingAs($admin)
             ->get('/usuarios/crear')
             ->assertOk()
-            ->assertSee('Registro de usuario');
+            ->assertSeeText('Registro de usuario')
+            ->assertSee('Volver al men&uacute;', false);
     }
 
     public function test_administrator_can_create_a_user(): void
@@ -44,6 +45,8 @@ class UserManagementTest extends TestCase
         ]);
 
         $response->assertRedirect('/usuarios/listado');
+        $response->assertSessionHas('status_title', 'Usuario creado correctamente');
+        $response->assertSessionHas('status', 'El usuario se creó correctamente.');
 
         $this->assertDatabaseHas('empleado', [
             'nombres' => 'Ana',
@@ -81,6 +84,8 @@ class UserManagementTest extends TestCase
         ]);
 
         $response->assertRedirect('/usuarios/listado');
+        $response->assertSessionHas('status_title', 'Usuario creado correctamente');
+        $response->assertSessionHas('status', 'El usuario se creó correctamente.');
 
         $this->assertDatabaseHas('cargo', [
             'nombre' => 'Tecnico de laboratorio',
@@ -133,6 +138,123 @@ class UserManagementTest extends TestCase
             'id_usuario' => $user->id_usuario,
             'estado' => true,
         ]);
+    }
+
+    public function test_administrator_can_update_a_user(): void
+    {
+        $admin = $this->createAdministrator();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+        $updatedRole = Role::factory()->create([
+            'nombre' => 'Laboratorio',
+        ]);
+        $user = User::factory()->create([
+            'id_rol' => $role->id_rol,
+            'username' => 'usuario01',
+            'estado' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->put('/usuarios/'.$user->id_usuario, [
+            'id_rol' => $updatedRole->id_rol,
+            'username' => 'usuario-editado',
+            'password' => '',
+            'password_confirmation' => '',
+            'estado' => '0',
+        ]);
+
+        $response->assertRedirect('/usuarios/listado');
+        $response->assertSessionHas('status_title', 'Usuario editado correctamente');
+        $response->assertSessionHas('status', 'El usuario se editó correctamente.');
+
+        $this->assertDatabaseHas('usuario', [
+            'id_usuario' => $user->id_usuario,
+            'id_rol' => $updatedRole->id_rol,
+            'username' => 'usuario-editado',
+            'estado' => false,
+        ]);
+    }
+
+    public function test_user_creation_validation_failure_displays_notification(): void
+    {
+        $admin = $this->createAdministrator();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->from('/usuarios/crear')
+            ->followingRedirects()
+            ->post('/usuarios', [
+                'id_rol' => $role->id_rol,
+                'username' => '',
+                'password' => 'secret123',
+                'password_confirmation' => 'secret123',
+                'estado' => '1',
+                'nombres' => 'Ana',
+                'apellidos' => 'Lopez',
+                'dpi' => '1111111111111',
+                'direccion' => 'Malacatan',
+            ]);
+
+        $response->assertSeeText('No se pudo completar la acción');
+        $response->assertSeeText('Revisa los datos del formulario antes de guardar.');
+    }
+
+    public function test_user_update_validation_failure_displays_notification(): void
+    {
+        $admin = $this->createAdministrator();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+        $duplicatedUser = User::factory()->create([
+            'id_rol' => $role->id_rol,
+            'username' => 'duplicado',
+        ]);
+        $user = User::factory()->create([
+            'id_rol' => $role->id_rol,
+            'username' => 'usuario01',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->from('/usuarios/'.$user->id_usuario.'/editar')
+            ->followingRedirects()
+            ->put('/usuarios/'.$user->id_usuario, [
+                'id_rol' => $role->id_rol,
+                'username' => $duplicatedUser->username,
+                'password' => '',
+                'password_confirmation' => '',
+                'estado' => '1',
+            ]);
+
+        $response->assertSeeText('No se pudo completar la acción');
+        $response->assertSeeText('Revisa los datos del formulario antes de guardar.');
+    }
+
+    public function test_user_module_options_show_button_to_return_to_menu(): void
+    {
+        $admin = $this->createAdministrator();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+        $user = User::factory()->create([
+            'id_rol' => $role->id_rol,
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/usuarios/listado')
+            ->assertOk()
+            ->assertSee('Volver al men&uacute;', false);
+
+        $this->actingAs($admin)
+            ->get('/usuarios/desactivar')
+            ->assertOk()
+            ->assertSee('Volver al men&uacute;', false);
+
+        $this->actingAs($admin)
+            ->get('/usuarios/'.$user->id_usuario.'/editar')
+            ->assertOk()
+            ->assertSee('Volver al men&uacute;', false);
     }
 
     public function test_non_administrator_cannot_access_user_module(): void
