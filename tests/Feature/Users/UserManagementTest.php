@@ -19,8 +19,8 @@ class UserManagementTest extends TestCase
         $this->actingAs($admin)
             ->get('/usuarios/crear')
             ->assertOk()
-            ->assertSeeText('Registro de usuario')
-            ->assertSee('Volver al men&uacute;', false);
+            ->assertSeeText('Registrar usuario')
+            ->assertSeeText('Volver a usuarios');
     }
 
     public function test_administrator_can_create_a_user(): void
@@ -244,17 +244,17 @@ class UserManagementTest extends TestCase
         $this->actingAs($admin)
             ->get('/usuarios/listado')
             ->assertOk()
-            ->assertSee('Volver al men&uacute;', false);
+            ->assertSeeText('Volver a usuarios');
 
         $this->actingAs($admin)
             ->get('/usuarios/desactivar')
             ->assertOk()
-            ->assertSee('Volver al men&uacute;', false);
+            ->assertSeeText('Volver a usuarios');
 
         $this->actingAs($admin)
             ->get('/usuarios/'.$user->id_usuario.'/editar')
             ->assertOk()
-            ->assertSee('Volver al men&uacute;', false);
+            ->assertSeeText('Volver a usuarios');
     }
 
     public function test_non_administrator_cannot_access_user_module(): void

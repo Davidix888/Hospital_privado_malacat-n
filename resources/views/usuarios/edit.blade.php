@@ -1,20 +1,24 @@
 <x-layouts.panel title="Editar usuario">
     <section style="padding-top: 2rem;">
-
         <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
-            <div class="space-y-3">
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Editar usuario</p>
-                <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Actualizaci&oacute;n de datos</h1>
-                <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                    Modifica la informaci&oacute;n del usuario seleccionado y cambia la contrase&ntilde;a solo cuando sea necesario.
-                </p>
-            </div>
-
-            @if (session('error') || $errors->any())
-                <div class="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {{ session('error', 'Revisa los datos del formulario antes de guardar.') }}
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Usuarios</p>
+                    <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Editar usuario</h1>
+                    <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
+                        Modifica la información del usuario seleccionado y cambia la contraseña solo cuando sea necesario.
+                    </p>
                 </div>
-            @endif
+
+                <div class="flex gap-3 lg:justify-end">
+                    <a
+                        href="{{ route('usuarios.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Volver a usuarios
+                    </a>
+                </div>
+            </div>
 
             <form method="POST" action="{{ route('usuarios.update', $managedUser) }}" class="mt-8 grid gap-6 lg:grid-cols-2">
                 @csrf
@@ -64,7 +68,7 @@
 
                 <div class="flex items-center gap-3">
                     <input
-                        id="estado"
+                        id="estado_hidden"
                         name="estado"
                         type="hidden"
                         value="0"
@@ -81,21 +85,21 @@
                 </div>
 
                 <div>
-                    <label for="password" class="text-sm font-medium text-[#0b1b57]">Nueva contrase&ntilde;a</label>
+                    <label for="password" class="text-sm font-medium text-[#0b1b57]">Nueva contraseña</label>
                     <input
                         id="password"
                         name="password"
                         type="password"
                         class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
                     >
-                    <p class="mt-2 text-xs text-[#0b1b57]/60">Deja este campo vac&iacute;o si no quieres cambiar la contrase&ntilde;a.</p>
+                    <p class="mt-2 text-xs text-[#0b1b57]/60">Deja este campo vacío si no quieres cambiar la contraseña.</p>
                     @error('password')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="text-sm font-medium text-[#0b1b57]">Confirmar nueva contrase&ntilde;a</label>
+                    <label for="password_confirmation" class="text-sm font-medium text-[#0b1b57]">Confirmar nueva contraseña</label>
                     <input
                         id="password_confirmation"
                         name="password_confirmation"
@@ -115,13 +119,7 @@
                         href="{{ route('usuarios.list') }}"
                         class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
                     >
-                        Volver al listado
-                    </a>
-                    <a
-                        href="{{ route('usuarios.index') }}"
-                        class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
-                    >
-                        Volver al men&uacute;
+                        Cancelar
                     </a>
                 </div>
             </form>
