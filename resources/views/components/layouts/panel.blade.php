@@ -51,7 +51,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+                                class="cursor-pointer rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
                             >
                                 Cerrar sesión
                             </button>

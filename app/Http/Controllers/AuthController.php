@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -24,9 +26,13 @@ class AuthController extends Controller
             'password.required' => 'La contrasena es obligatoria.',
         ]);
 
-        $credentials['estado'] = true;
+        $normalizedUsername = mb_strtolower(trim($credentials['username']));
 
-        if (! Auth::attempt($credentials)) {
+        $user = User::query()
+            ->whereRaw('LOWER(username) = ?', [$normalizedUsername])
+            ->first();
+
+        if (! $user || ! $user->estado || ! Hash::check($credentials['password'], $user->password)) {
             return back()
                 ->withInput($request->only('username'))
                 ->withErrors([
@@ -34,6 +40,7 @@ class AuthController extends Controller
                 ]);
         }
 
+        Auth::login($user);
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'))

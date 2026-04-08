@@ -33,6 +33,22 @@ class LoginTest extends TestCase
         $response->assertRedirect('/dashboard');
     }
 
+    public function test_user_can_authenticate_with_mixed_case_username(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'ldixquiac',
+            'password' => 'password',
+        ]);
+
+        $response = $this->post('/login', [
+            'username' => 'LdIxQuIaC',
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect('/dashboard');
+    }
+
     public function test_user_cannot_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();

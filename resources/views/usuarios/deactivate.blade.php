@@ -108,7 +108,10 @@
                                 <td class="px-4 py-3 text-center align-middle break-words">{{ $user->employee_name }}</td>
                                 <td class="px-4 py-3 text-center align-middle break-words">{{ $user->role_name }}</td>
                                 <td class="px-4 py-3 text-center align-middle">
-                                    <span class="inline-flex items-center justify-center {{ $user->estado ? 'text-emerald-600' : 'text-red-600' }}">
+                                    <span
+                                        class="inline-flex min-w-[108px] items-center justify-center rounded-[999px] px-3 py-1 text-xs font-semibold"
+                                        style="{{ $user->estado ? 'background:#dcfce7;color:#166534;' : 'background:#fee2e2;color:#991b1b;' }}"
+                                    >
                                         {{ $user->estado ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </td>
@@ -119,7 +122,8 @@
                                             @method('PATCH')
                                             <button
                                                 type="submit"
-                                                class="inline-flex min-w-[118px] items-center justify-center rounded-[1rem] bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
+                                                class="inline-flex min-w-[118px] cursor-pointer items-center justify-center rounded-[1rem] px-4 py-2 text-xs font-semibold"
+                                                style="background:#dc2626;color:#ffffff;"
                                             >
                                                 Desactivar
                                             </button>
@@ -129,7 +133,8 @@
                                             <button
                                                 type="button"
                                                 disabled
-                                                class="inline-flex min-w-[118px] cursor-not-allowed items-center justify-center rounded-[1rem] bg-slate-300 px-4 py-2 text-xs font-semibold text-slate-700"
+                                                class="inline-flex min-w-[118px] cursor-not-allowed items-center justify-center rounded-[1rem] px-4 py-2 text-xs font-semibold"
+                                                style="background:#cbd5e1;color:#334155;"
                                             >
                                                 Usuario actual
                                             </button>
@@ -140,7 +145,8 @@
                                             @method('PATCH')
                                             <button
                                                 type="submit"
-                                                class="inline-flex min-w-[118px] items-center justify-center rounded-[1rem] bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
+                                                class="inline-flex min-w-[118px] cursor-pointer items-center justify-center rounded-[1rem] px-4 py-2 text-xs font-semibold"
+                                                style="background:#059669;color:#ffffff;"
                                             >
                                                 Activar
                                             </button>
