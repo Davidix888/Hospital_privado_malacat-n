@@ -98,7 +98,7 @@
                             <th class="w-[16%] px-4 py-3 text-center font-semibold align-middle">Fecha</th>
                             <th class="w-[24%] px-4 py-3 text-center font-semibold align-middle">Proveedor</th>
                             <th class="w-[16%] px-4 py-3 text-center font-semibold align-middle">Usuario</th>
-                            <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Items</th>
+                            <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Cantidad</th>
                             <th class="w-[15%] px-4 py-3 text-center font-semibold align-middle">Total</th>
                             <th class="w-[15%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
                         </tr>

@@ -27,7 +27,17 @@ class PharmacyModuleTest extends TestCase
         $this->actingAs($user)
             ->get('/farmacia')
             ->assertOk()
-            ->assertSee('Menu operativo de farmacia');
+            ->assertSee('Men&uacute; principal de farmacia', false);
+    }
+
+    public function test_farmacia_user_can_access_purchase_menu(): void
+    {
+        $user = $this->createPharmacyUser();
+
+        $this->actingAs($user)
+            ->get('/farmacia/compras/menu')
+            ->assertOk()
+            ->assertSee('Menu de compras de farmacia');
     }
 
     public function test_farmacia_user_can_access_purchases_page(): void

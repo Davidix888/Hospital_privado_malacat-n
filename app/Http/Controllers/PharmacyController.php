@@ -34,6 +34,21 @@ class PharmacyController extends Controller
         ]);
     }
 
+    public function purchaseMenu(): View
+    {
+        return view('farmacia.compras.menu');
+    }
+
+    public function sales(): View
+    {
+        return view('farmacia.ventas.index');
+    }
+
+    public function reports(): View
+    {
+        return view('farmacia.reportes.index');
+    }
+
     public function createSupplier(): View
     {
         return view('farmacia.proveedores.create');

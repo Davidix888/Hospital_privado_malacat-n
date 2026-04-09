@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function (): void {
         ->controller(PharmacyController::class)
         ->group(function (): void {
             Route::get('/', 'index')->name('index');
+            Route::get('/compras/menu', 'purchaseMenu')->name('purchases.menu');
             Route::get('/medicamentos', 'medicines')->name('medicines.index');
             Route::get('/medicamentos/crear', 'createMedicine')->name('medicines.create');
             Route::post('/medicamentos', 'storeMedicine')->name('medicines.store');
@@ -49,7 +50,9 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/compras', 'purchases')->name('purchases.index');
             Route::get('/compras/crear', 'createPurchase')->name('purchases.create');
             Route::post('/compras', 'storePurchase')->name('purchases.store');
+            Route::get('/ventas', 'sales')->name('sales.index');
             Route::get('/inventario', 'inventory')->name('inventory.index');
+            Route::get('/reportes', 'reports')->name('reports.index');
         });
     Route::view('/resumenes', 'resumenes.index')
         ->middleware('can:resumenes.view')
