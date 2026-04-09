@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? 'Panel' }} | {{ config('app.name', 'Hospital Privado Malacatán') }}</title>
+        <title>{{ $title ?? 'Panel' }}</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|outfit:500,600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -38,12 +38,12 @@
                         >
                             <img
                                 src="{{ asset('imagenes/Logo_Hospital.jpeg') }}"
-                                alt="Logo Hospital Privado Malacatán"
+                                alt="Logo Hospital Privado Malacatan"
                                 class="h-14 w-14 rounded-2xl bg-white object-contain p-1.5 shadow-sm"
                             >
                             <div>
-                                <p class="font-['Outfit'] text-xl font-semibold tracking-wide">Hospital Privado Malacatán</p>
-                                <p class="text-sm text-white/75">Módulo administrativo</p>
+                                <p class="font-['Outfit'] text-xl font-semibold tracking-wide">Hospital Privado Malacat&aacute;n</p>
+                                <p class="text-sm text-white/75">M&oacute;dulo administrativo</p>
                             </div>
                         </a>
 
@@ -53,7 +53,7 @@
                                 type="submit"
                                 class="cursor-pointer rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
                             >
-                                Cerrar sesión
+                                Cerrar sesi&oacute;n
                             </button>
                         </form>
                     </div>
