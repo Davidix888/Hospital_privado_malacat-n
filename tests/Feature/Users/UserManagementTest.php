@@ -15,18 +15,29 @@ class UserManagementTest extends TestCase
     public function test_administrator_can_view_user_creation_screen(): void
     {
         $admin = $this->createAdministrator();
+        Cargo::syncUserManagementOptions();
+        Cargo::factory()->create([
+            'nombre' => 'Recepcionista',
+        ]);
 
         $this->actingAs($admin)
             ->get('/usuarios/crear')
             ->assertOk()
             ->assertSeeText('Registrar usuario')
-            ->assertSeeText('Volver a usuarios');
+            ->assertSeeText('Volver a usuarios')
+            ->assertSeeText('Farmacéutico')
+            ->assertSeeText('Técnico de laboratorio')
+            ->assertSeeText('Licenciado')
+            ->assertSeeText('Administrador')
+            ->assertDontSeeText('Recepcionista')
+            ->assertDontSeeText('Nuevo cargo');
     }
 
     public function test_administrator_can_create_a_user(): void
     {
         $admin = $this->createAdministrator();
-        $cargo = Cargo::factory()->create();
+        Cargo::syncUserManagementOptions();
+        $cargo = Cargo::query()->where('nombre', 'Farmacéutico')->firstOrFail();
         $role = Role::factory()->create([
             'nombre' => 'Farmacia',
         ]);
@@ -62,45 +73,39 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    public function test_administrator_can_create_user_with_new_employee_and_new_cargo(): void
+    public function test_administrator_cannot_create_a_user_with_a_disallowed_cargo(): void
     {
         $admin = $this->createAdministrator();
         $role = Role::factory()->create([
             'nombre' => 'Laboratorio',
         ]);
+        $cargo = Cargo::factory()->create([
+            'nombre' => 'Recepcionista',
+        ]);
 
-        $response = $this->actingAs($admin)->post('/usuarios', [
-            'id_rol' => $role->id_rol,
+        $response = $this->actingAs($admin)
+            ->from('/usuarios/crear')
+            ->post('/usuarios', [
+                'id_cargo' => $cargo->id_cargo,
+                'id_rol' => $role->id_rol,
+                'username' => 'labnuevo',
+                'password' => 'secret123',
+                'password_confirmation' => 'secret123',
+                'estado' => '1',
+                'nombres' => 'Luis',
+                'apellidos' => 'Dixquiac',
+                'dpi' => '1234567890123',
+                'direccion' => 'Malacatan, San Marcos',
+            ]);
+
+        $response
+            ->assertRedirect('/usuarios/crear')
+            ->assertSessionHasErrors([
+                'id_cargo' => 'El cargo seleccionado no es válido.',
+            ]);
+
+        $this->assertDatabaseMissing('usuario', [
             'username' => 'labnuevo',
-            'password' => 'secret123',
-            'password_confirmation' => 'secret123',
-            'estado' => '1',
-            'cargo_nombre' => 'Tecnico de laboratorio',
-            'cargo_descripcion' => 'Cargo creado desde el modulo.',
-            'nombres' => 'Luis',
-            'apellidos' => 'Dixquiac',
-            'dpi' => '1234567890123',
-            'direccion' => 'Malacatan, San Marcos',
-        ]);
-
-        $response->assertRedirect('/usuarios/listado');
-        $response->assertSessionHas('status_title', 'Usuario creado correctamente');
-        $response->assertSessionHas('status', 'El usuario se creó correctamente.');
-
-        $this->assertDatabaseHas('cargo', [
-            'nombre' => 'Tecnico de laboratorio',
-        ]);
-
-        $this->assertDatabaseHas('empleado', [
-            'nombres' => 'Luis',
-            'apellidos' => 'Dixquiac',
-            'dpi' => '1234567890123',
-        ]);
-
-        $this->assertDatabaseHas('usuario', [
-            'username' => 'labnuevo',
-            'id_rol' => $role->id_rol,
-            'estado' => true,
         ]);
     }
 
@@ -178,6 +183,7 @@ class UserManagementTest extends TestCase
     public function test_user_creation_validation_failure_displays_notification(): void
     {
         $admin = $this->createAdministrator();
+        Cargo::syncUserManagementOptions();
         $role = Role::factory()->create([
             'nombre' => 'Farmacia',
         ]);

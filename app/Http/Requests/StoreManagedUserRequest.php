@@ -2,15 +2,20 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Cargo;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 class StoreManagedUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        Cargo::syncUserManagementOptions();
     }
 
     /**
@@ -28,23 +33,18 @@ class StoreManagedUserRequest extends FormRequest
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'estado' => ['required', 'boolean'],
-            'id_cargo' => ['nullable', 'integer', 'exists:cargo,id_cargo'],
-            'cargo_nombre' => ['nullable', 'string', 'max:80'],
-            'cargo_descripcion' => ['nullable', 'string', 'max:255'],
+            'id_cargo' => [
+                'required',
+                'integer',
+                Rule::exists('cargo', 'id_cargo')->where(function ($query): void {
+                    $query->whereIn('nombre', Cargo::userManagementNames());
+                }),
+            ],
             'nombres' => ['required', 'string', 'max:80'],
             'apellidos' => ['required', 'string', 'max:80'],
             'dpi' => ['required', 'string', 'size:13', Rule::unique('empleado', 'dpi')],
             'direccion' => ['required', 'string', 'max:150'],
         ];
-    }
-
-    public function withValidator(Validator $validator): void
-    {
-        $validator->after(function (Validator $validator): void {
-            if (! $this->filled('id_cargo') && ! $this->filled('cargo_nombre')) {
-                $validator->errors()->add('id_cargo', 'Debes seleccionar un cargo o escribir uno nuevo para el empleado.');
-            }
-        });
     }
 
     /**
@@ -60,12 +60,13 @@ class StoreManagedUserRequest extends FormRequest
             'password.confirmed' => 'La confirmacion de contrasena no coincide.',
             'password.min' => 'La contrasena debe tener al menos 8 caracteres.',
             'estado.required' => 'Debes seleccionar el estado inicial del usuario.',
+            'id_cargo.required' => 'Debes seleccionar un cargo.',
             'nombres.required' => 'Los nombres del empleado son obligatorios.',
             'apellidos.required' => 'Los apellidos del empleado son obligatorios.',
             'dpi.required' => 'El DPI del empleado es obligatorio.',
             'dpi.unique' => 'Ya existe un empleado registrado con ese DPI.',
             'direccion.required' => 'La direccion del empleado es obligatoria.',
-            'id_cargo.exists' => 'El cargo seleccionado no existe.',
+            'id_cargo.exists' => 'El cargo seleccionado no es válido.',
         ];
     }
 }
