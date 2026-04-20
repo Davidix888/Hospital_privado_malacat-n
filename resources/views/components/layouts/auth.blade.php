@@ -28,10 +28,6 @@
                 <main class="flex items-center justify-center py-4 sm:py-5">
                     {{ $slot }}
                 </main>
-
-                <footer class="mx-auto w-full max-w-3xl rounded-[1rem] border border-[#091342] bg-[#0b1b57] px-4 py-2 text-center text-xs font-medium text-white shadow-[0_8px_20px_rgba(11,27,87,0.12)] sm:px-5 sm:text-sm">
-                    <p>Team mobux y dippsi</p>
-                </footer>
             </div>
         </div>
     </body>

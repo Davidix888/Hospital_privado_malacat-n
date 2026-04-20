@@ -73,7 +73,7 @@
                                     maxlength="13"
                                     inputmode="numeric"
                                     pattern="[0-9]{13}"
-                                    placeholder="Ejemplo: 1234567890123"
+                                    placeholder="Ej: 1234567890123"
                                 >
                                 @error('dpi')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -100,57 +100,27 @@
                     <div class="border border-[#0b1b57]/10 p-5">
                         <h2 class="font-['Outfit'] text-2xl font-semibold text-[#0b1b57]">2. Cargo</h2>
                         <p class="mt-2 text-sm leading-6 text-[#0b1b57]/70">
-                            Puedes seleccionar el cargo del empleado o crear uno nuevo.
+                            Selecciona el cargo del empleado entre las opciones permitidas por el sistema.
                         </p>
 
-                        <div class="mt-5 grid gap-4">
-                            <div>
-                                <label for="id_cargo" class="text-sm font-medium text-[#0b1b57]">Cargo existente</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Selecciona un cargo.</p>
-                                <select
-                                    id="id_cargo"
-                                    name="id_cargo"
-                                    class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
-                                >
-                                    <option value="">Selecciona un cargo</option>
-                                    @foreach ($cargos as $cargo)
-                                        <option value="{{ $cargo->id_cargo }}" @selected(old('id_cargo') == $cargo->id_cargo)>
-                                            {{ $cargo->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('id_cargo')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="cargo_nombre" class="text-sm font-medium text-[#0b1b57]">Nuevo cargo</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el nombre del nuevo cargo.</p>
-                                <input
-                                    id="cargo_nombre"
-                                    name="cargo_nombre"
-                                    type="text"
-                                    value="{{ old('cargo_nombre') }}"
-                                    class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
-                                    placeholder="Ejemplo: Técnico de laboratorio"
-                                >
-                                @error('cargo_nombre')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="cargo_descripcion" class="text-sm font-medium text-[#0b1b57]">Descripción</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Este campo es opcional y ayuda a describir mejor el cargo.</p>
-                                <input
-                                    id="cargo_descripcion"
-                                    name="cargo_descripcion"
-                                    type="text"
-                                    value="{{ old('cargo_descripcion') }}"
-                                    class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
-                                >
-                            </div>
+                        <div class="mt-5">
+                            <label for="id_cargo" class="text-sm font-medium text-[#0b1b57]">Cargo</label>
+                            <p class="mt-1 text-xs text-[#0b1b57]/60">Elige uno de los cargos disponibles para este módulo.</p>
+                            <select
+                                id="id_cargo"
+                                name="id_cargo"
+                                class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
+                            >
+                                <option value="">Selecciona un cargo</option>
+                                @foreach ($cargos as $cargo)
+                                    <option value="{{ $cargo->id_cargo }}" @selected(old('id_cargo') == $cargo->id_cargo)>
+                                        {{ $cargo->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_cargo')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -181,14 +151,14 @@
 
                             <div>
                                 <label for="username" class="text-sm font-medium text-[#0b1b57]">Nombre de usuario</label>
-                                <p class="mt-1 text-xs text-[#0b1b57]/60">Usa un nombre único, sin repetir. Ejemplo: ldixquiac.</p>
+                                <p class="mt-1 text-xs text-[#0b1b57]/60">Usa un nombre único, sin repetir. Ej: ldixquiac.</p>
                                 <input
                                     id="username"
                                     name="username"
                                     type="text"
                                     value="{{ old('username') }}"
                                     class="mt-2 w-full border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
-                                    placeholder="Ejemplo: ldixquiac"
+                                    placeholder="Ej: ldixquiac"
                                 >
                                 @error('username')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

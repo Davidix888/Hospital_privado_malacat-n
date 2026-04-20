@@ -45,19 +45,8 @@ class UserManagementController extends Controller
 
         try {
             DB::transaction(function () use ($validated, $request): void {
-                $cargoId = $validated['id_cargo'] ?? null;
-
-                if (! $cargoId) {
-                    $cargo = Cargo::firstOrCreate(
-                        ['nombre' => trim($validated['cargo_nombre'])],
-                        ['descripcion' => $validated['cargo_descripcion'] ?? null],
-                    );
-
-                    $cargoId = $cargo->id_cargo;
-                }
-
                 $employee = Employee::create([
-                    'id_cargo' => (int) $cargoId,
+                    'id_cargo' => (int) $validated['id_cargo'],
                     'nombres' => trim($validated['nombres']),
                     'apellidos' => trim($validated['apellidos']),
                     'dpi' => trim($validated['dpi']),
@@ -223,9 +212,16 @@ class UserManagementController extends Controller
 
     private function cargos()
     {
+        Cargo::syncUserManagementOptions();
+
+        $allowedNames = Cargo::userManagementNames();
+        $order = array_flip($allowedNames);
+
         return Cargo::query()
-            ->orderBy('nombre')
-            ->get();
+            ->whereIn('nombre', $allowedNames)
+            ->get()
+            ->sortBy(fn (Cargo $cargo) => $order[$cargo->nombre] ?? PHP_INT_MAX)
+            ->values();
     }
 
     private function syncBaseRoles(): void
