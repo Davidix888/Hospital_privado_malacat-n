@@ -66,4 +66,20 @@ class Inventory extends Model
     {
         return $this->cantidad_actual <= $this->stock_minimo;
     }
+
+    public function getSalesOptionLabelAttribute(): string
+    {
+        $price = number_format((float) ($this->medicine_presentation?->precio_venta ?? 0), 2);
+        $expiresAt = $this->expires_at ?? 'Sin fecha';
+
+        return sprintf(
+            '%s - %s | Lote %s | Stock %d | Vence %s | Precio Q %s',
+            $this->medicine_name,
+            $this->presentation_name,
+            $this->lot_number,
+            $this->cantidad_actual,
+            $expiresAt,
+            $price
+        );
+    }
 }

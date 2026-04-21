@@ -61,7 +61,7 @@
 
                 <div class="mt-auto pt-5">
                     <a
-                        href="{{ route('farmacia.purchases.menu') }}"
+                        href="{{ route('farmacia.purchases.index') }}"
                         class="inline-flex rounded-[1.6rem] bg-[#0b1b57] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10256f]"
                     >
                         Ingresar al m&oacute;dulo

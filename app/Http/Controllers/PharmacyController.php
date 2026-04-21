@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMedicineCatalogRequest;
 use App\Http\Requests\StorePurchaseRequest;
+use App\Http\Requests\StoreSaleRequest;
 use App\Http\Requests\StoreSupplierRequest;
+use App\Http\Requests\UpdateMedicineCatalogRequest;
 use App\Models\Inventory;
 use App\Models\Lot;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\MedicinePresentation;
+use App\Models\Patient;
 use App\Models\Presentation;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
+use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\Supplier;
-use App\Models\SupplierEmail;
-use App\Models\SupplierPhone;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,14 +37,44 @@ class PharmacyController extends Controller
         ]);
     }
 
-    public function purchaseMenu(): View
+    public function purchaseMenu(): RedirectResponse
     {
-        return view('farmacia.compras.menu');
+        return redirect()->route('farmacia.purchases.index');
     }
 
-    public function sales(): View
+    public function sales(Request $request): View
     {
-        return view('farmacia.ventas.index');
+        $sales = Sale::query()
+            ->with([
+                'user',
+                'patient',
+                'details.medicinePresentation.medicine',
+                'details.medicinePresentation.presentation',
+            ])
+            ->when($request->filled('q'), function ($query) use ($request): void {
+                $term = trim((string) $request->string('q'));
+
+                $query->where(function ($innerQuery) use ($term): void {
+                    $innerQuery->whereHas('user', fn ($userQuery) => $userQuery->where('username', 'ILIKE', "%{$term}%"))
+                        ->orWhereHas('patient', function ($patientQuery) use ($term): void {
+                            $patientQuery->where('nombres', 'ILIKE', "%{$term}%")
+                                ->orWhere('apellidos', 'ILIKE', "%{$term}%");
+                        })
+                        ->orWhereHas('details.medicinePresentation.medicine', fn ($medicineQuery) => $medicineQuery->where('nombre', 'ILIKE', "%{$term}%"))
+                        ->orWhereHas('details.medicinePresentation.presentation', fn ($presentationQuery) => $presentationQuery->where('nombre', 'ILIKE', "%{$term}%"));
+                });
+            })
+            ->when($request->filled('estado'), function ($query) use ($request): void {
+                $query->where('estado', $request->string('estado')->value() === 'activo');
+            })
+            ->orderByDesc('fecha')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('farmacia.ventas.index', [
+            'sales' => $sales,
+            'filters' => $request->only(['q', 'estado']),
+        ]);
     }
 
     public function reports(): View
@@ -64,6 +97,8 @@ class PharmacyController extends Controller
                 $query->where(function ($innerQuery) use ($term): void {
                     $innerQuery->where('nombre', 'ILIKE', "%{$term}%")
                         ->orWhere('direccion', 'ILIKE', "%{$term}%")
+                        ->orWhere('correo', 'ILIKE', "%{$term}%")
+                        ->orWhere('telefono', 'ILIKE', "%{$term}%")
                         ->orWhereHas('email', fn ($emailQuery) => $emailQuery->where('correo', 'ILIKE', "%{$term}%"))
                         ->orWhereHas('phone', fn ($phoneQuery) => $phoneQuery->where('numero', 'ILIKE', "%{$term}%"));
                 });
@@ -115,20 +150,29 @@ class PharmacyController extends Controller
         ]);
     }
 
+    public function editMedicine(MedicinePresentation $medicinePresentation): View
+    {
+        $medicinePresentation->load(['medicine.category', 'presentation']);
+
+        return view('farmacia.medicamentos.edit', [
+            'medicinePresentation' => $medicinePresentation,
+        ]);
+    }
+
     public function storeMedicine(StoreMedicineCatalogRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         try {
             DB::transaction(function () use ($validated): void {
-                $category = ! empty($validated['id_categoria'])
+                $category = ($validated['modo_categoria'] ?? 'existente') === 'existente'
                     ? MedicineCategory::query()->findOrFail((int) $validated['id_categoria'])
                     : MedicineCategory::query()->firstOrCreate(
                         ['nombre' => trim($validated['nueva_categoria'])],
                         ['descripcion' => filled($validated['descripcion_categoria'] ?? null) ? trim($validated['descripcion_categoria']) : null]
                     );
 
-                $presentation = ! empty($validated['id_presentacion'])
+                $presentation = ($validated['modo_presentacion'] ?? 'existente') === 'existente'
                     ? Presentation::query()->findOrFail((int) $validated['id_presentacion'])
                     : Presentation::query()->firstOrCreate(
                         ['nombre' => trim($validated['nueva_presentacion'])],
@@ -167,30 +211,32 @@ class PharmacyController extends Controller
             ->with('status', 'Medicamento registrado correctamente.');
     }
 
+    public function updateMedicine(UpdateMedicineCatalogRequest $request, MedicinePresentation $medicinePresentation): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $medicinePresentation->update([
+            'precio_venta' => $validated['precio_venta'],
+            'stock_minimo' => (int) $validated['stock_minimo'],
+            'estado' => (bool) $validated['estado'],
+        ]);
+
+        return redirect()
+            ->route('farmacia.medicines.index')
+            ->with('status', 'Catalogo actualizado correctamente.');
+    }
+
     public function storeSupplier(StoreSupplierRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         try {
             DB::transaction(function () use ($validated): void {
-                $supplier = Supplier::create([
+                Supplier::create([
                     'nombre' => trim($validated['nombre']),
                     'direccion' => trim($validated['direccion']),
-                    'estado' => (bool) $validated['estado'],
-                ]);
-
-                if (! empty($validated['correo'])) {
-                    SupplierEmail::create([
-                        'id_proveedor' => $supplier->id_proveedor,
-                        'correo' => trim($validated['correo']),
-                        'estado' => (bool) $validated['estado'],
-                    ]);
-                }
-
-                SupplierPhone::create([
-                    'id_proveedor' => $supplier->id_proveedor,
-                    'numero' => trim($validated['telefono']),
-                    'tipo' => 'Principal',
+                    'correo' => filled($validated['correo'] ?? null) ? trim($validated['correo']) : null,
+                    'telefono' => trim($validated['telefono']),
                     'estado' => (bool) $validated['estado'],
                 ]);
             });
@@ -222,19 +268,33 @@ class PharmacyController extends Controller
         ]);
     }
 
+    public function createSale(): View
+    {
+        return view('farmacia.ventas.create', [
+            'patients' => Patient::query()
+                ->where('estado', true)
+                ->orderBy('nombres')
+                ->orderBy('apellidos')
+                ->get(),
+            'availableInventory' => $this->availableInventoryForSales(),
+        ]);
+    }
+
     public function storePurchase(StorePurchaseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $subtotal = (float) $validated['cantidad'] * (float) $validated['precio_compra'];
+        $isDelivered = $validated['estado_entrega'] === 'entregada';
 
         try {
-            DB::transaction(function () use ($validated, $request, $subtotal): void {
+            DB::transaction(function () use ($validated, $request, $subtotal, $isDelivered): void {
                 $purchase = Purchase::create([
                     'id_proveedor' => (int) $validated['id_proveedor'],
                     'id_usuario' => (int) $request->user()->id_usuario,
                     'fecha' => $validated['fecha'],
                     'total' => $subtotal,
-                    'estado' => (bool) $validated['estado'],
+                    'estado_entrega' => $validated['estado_entrega'],
+                    'estado' => $isDelivered,
                 ]);
 
                 $detail = PurchaseDetail::create([
@@ -250,14 +310,16 @@ class PharmacyController extends Controller
                     'numero_lote' => trim($validated['numero_lote']),
                     'fecha_vencimiento' => $validated['fecha_vencimiento'],
                     'fecha_ingreso' => $validated['fecha_ingreso'],
-                    'estado' => (bool) $validated['estado'],
+                    'estado' => $isDelivered,
                 ]);
 
-                Inventory::create([
-                    'id_lote' => $lot->id_lote,
-                    'cantidad_actual' => (int) $validated['cantidad'],
-                    'fecha_actualizacion' => now(),
-                ]);
+                if ($isDelivered) {
+                    Inventory::create([
+                        'id_lote' => $lot->id_lote,
+                        'cantidad_actual' => (int) $validated['cantidad'],
+                        'fecha_actualizacion' => now(),
+                    ]);
+                }
             });
         } catch (Throwable $exception) {
             report($exception);
@@ -269,23 +331,106 @@ class PharmacyController extends Controller
 
         return redirect()
             ->route('farmacia.purchases.index')
-            ->with('status', 'Compra registrada correctamente y stock actualizado.');
+            ->with('status', $isDelivered
+                ? 'Compra registrada como entregada y stock actualizado.'
+                : 'Compra registrada como pendiente. El inventario se actualizara cuando la marques como entregada.');
+    }
+
+    public function storeSale(StoreSaleRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        try {
+            DB::transaction(function () use ($validated, $request): void {
+                $inventory = Inventory::query()
+                    ->with(['lot.purchaseDetail.medicinePresentation.medicine', 'lot.purchaseDetail.medicinePresentation.presentation'])
+                    ->where('id_lote', (int) $validated['id_lote'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $medicinePresentation = $inventory->medicine_presentation;
+
+                if (! $medicinePresentation || $inventory->cantidad_actual < (int) $validated['cantidad']) {
+                    throw new \RuntimeException('Inventario insuficiente para registrar la venta.');
+                }
+
+                $patientMode = $validated['modo_paciente'] ?? 'ninguno';
+                $patient = null;
+
+                if ($patientMode === 'existente') {
+                    $patient = Patient::query()->findOrFail((int) $validated['id_paciente']);
+                }
+
+                if ($patientMode === 'nuevo') {
+                    $patient = Patient::create([
+                        'nombres' => trim($validated['nombres_paciente']),
+                        'apellidos' => trim($validated['apellidos_paciente']),
+                        'fecha_nacimiento' => $validated['fecha_nacimiento_paciente'],
+                        'sexo' => trim($validated['sexo_paciente']),
+                        'direccion' => trim($validated['direccion_paciente']),
+                        'estado' => true,
+                    ]);
+                }
+
+                $subtotal = (float) $medicinePresentation->precio_venta * (int) $validated['cantidad'];
+
+                $sale = Sale::create([
+                    'id_paciente' => $patient?->id_paciente,
+                    'id_usuario' => (int) $request->user()->id_usuario,
+                    'fecha' => $validated['fecha'],
+                    'total' => $subtotal,
+                    'estado' => (bool) $validated['estado'],
+                ]);
+
+                SaleDetail::create([
+                    'id_venta' => $sale->id_venta,
+                    'id_medicamento_presentacion' => $medicinePresentation->id_medicamento_presentacion,
+                    'cantidad' => (int) $validated['cantidad'],
+                    'precio_unitario' => $medicinePresentation->precio_venta,
+                    'subtotal' => $subtotal,
+                ]);
+
+                $inventory->cantidad_actual -= (int) $validated['cantidad'];
+                $inventory->fecha_actualizacion = now();
+                $inventory->save();
+            });
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error_title', 'No se pudo registrar la venta')
+                ->with('error', $this->saleFailureMessage($exception));
+        }
+
+        return redirect()
+            ->route('farmacia.sales.index')
+            ->with('status', 'Venta registrada correctamente y stock actualizado.');
     }
 
     public function purchases(Request $request): View
     {
         $purchases = Purchase::query()
-            ->with(['supplier', 'user', 'details'])
+            ->with([
+                'supplier',
+                'user',
+                'details.medicinePresentation.medicine',
+                'details.medicinePresentation.presentation',
+                'details.lots',
+            ])
             ->when($request->filled('q'), function ($query) use ($request): void {
                 $term = trim((string) $request->string('q'));
 
                 $query->where(function ($innerQuery) use ($term): void {
                     $innerQuery->whereHas('supplier', fn ($supplierQuery) => $supplierQuery->where('nombre', 'ILIKE', "%{$term}%"))
-                        ->orWhereHas('user', fn ($userQuery) => $userQuery->where('username', 'ILIKE', "%{$term}%"));
+                        ->orWhereHas('user', fn ($userQuery) => $userQuery->where('username', 'ILIKE', "%{$term}%"))
+                        ->orWhereHas('details.medicinePresentation.medicine', fn ($medicineQuery) => $medicineQuery->where('nombre', 'ILIKE', "%{$term}%"))
+                        ->orWhereHas('details.medicinePresentation.presentation', fn ($presentationQuery) => $presentationQuery->where('nombre', 'ILIKE', "%{$term}%"))
+                        ->orWhereHas('details.lots', fn ($lotQuery) => $lotQuery->where('numero_lote', 'ILIKE', "%{$term}%"));
                 });
             })
-            ->when($request->filled('estado'), function ($query) use ($request): void {
-                $query->where('estado', $request->string('estado')->value() === 'activo');
+            ->when($request->filled('estado_entrega'), function ($query) use ($request): void {
+                $query->where('estado_entrega', $request->string('estado_entrega')->value());
             })
             ->orderByDesc('fecha')
             ->paginate(10)
@@ -293,8 +438,55 @@ class PharmacyController extends Controller
 
         return view('farmacia.compras.index', [
             'purchases' => $purchases,
-            'filters' => $request->only(['q', 'estado']),
+            'filters' => $request->only(['q', 'estado_entrega']),
         ]);
+    }
+
+    public function deliverPurchase(Purchase $purchase): RedirectResponse
+    {
+        if ($purchase->is_delivered) {
+            return redirect()
+                ->route('farmacia.purchases.index')
+                ->with('status', 'La compra ya estaba marcada como entregada.');
+        }
+
+        try {
+            DB::transaction(function () use ($purchase): void {
+                $purchase->load(['details.lots.inventory']);
+
+                foreach ($purchase->details as $detail) {
+                    foreach ($detail->lots as $lot) {
+                        if (! $lot->estado) {
+                            $lot->estado = true;
+                            $lot->save();
+                        }
+
+                        $inventory = Inventory::query()->firstOrNew([
+                            'id_lote' => $lot->id_lote,
+                        ]);
+
+                        if (! $inventory->exists) {
+                            $inventory->cantidad_actual = (int) $detail->cantidad;
+                        }
+
+                        $inventory->fecha_actualizacion = now();
+                        $inventory->save();
+                    }
+                }
+
+                $purchase->estado_entrega = 'entregada';
+                $purchase->estado = true;
+                $purchase->save();
+            });
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'No se pudo marcar la compra como entregada. Intenta nuevamente.');
+        }
+
+        return redirect()
+            ->route('farmacia.purchases.index')
+            ->with('status', 'Compra marcada como entregada y stock actualizado.');
     }
 
     public function inventory(Request $request): View
@@ -338,5 +530,43 @@ class PharmacyController extends Controller
             ->sortBy('cantidad_actual')
             ->take($limit)
             ->values();
+    }
+
+    private function availableInventoryForSales(): Collection
+    {
+        return Inventory::query()
+            ->with([
+                'lot.purchaseDetail.medicinePresentation.medicine',
+                'lot.purchaseDetail.medicinePresentation.presentation',
+            ])
+            ->where('cantidad_actual', '>', 0)
+            ->get()
+            ->filter(function (Inventory $inventory): bool {
+                $lot = $inventory->lot;
+                $medicinePresentation = $inventory->medicine_presentation;
+
+                return (bool) ($lot?->estado)
+                    && ! ($lot?->fecha_vencimiento?->isBefore(today()) ?? true)
+                    && (bool) ($medicinePresentation?->estado)
+                    && (bool) ($medicinePresentation?->medicine?->estado);
+            })
+            ->sortBy(fn (Inventory $inventory): string => sprintf(
+                '%012d|%s|%s',
+                $inventory->lot?->fecha_vencimiento?->timestamp ?? PHP_INT_MAX,
+                $inventory->medicine_name,
+                $inventory->presentation_name
+            ))
+            ->values();
+    }
+
+    private function saleFailureMessage(Throwable $exception): string
+    {
+        $message = $exception->getMessage();
+
+        if (filled($message) && ! str_contains(strtolower($message), 'sqlstate')) {
+            return $message;
+        }
+
+        return 'No se pudo registrar la venta. Verifica los datos e intenta nuevamente.';
     }
 }

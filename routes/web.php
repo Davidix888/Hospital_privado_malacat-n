@@ -45,13 +45,18 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/medicamentos', 'medicines')->name('medicines.index');
             Route::get('/medicamentos/crear', 'createMedicine')->name('medicines.create');
             Route::post('/medicamentos', 'storeMedicine')->name('medicines.store');
+            Route::get('/medicamentos/{medicinePresentation:id_medicamento_presentacion}/editar', 'editMedicine')->name('medicines.edit');
+            Route::put('/medicamentos/{medicinePresentation:id_medicamento_presentacion}', 'updateMedicine')->name('medicines.update');
             Route::get('/proveedores', 'suppliers')->name('suppliers.index');
             Route::get('/proveedores/crear', 'createSupplier')->name('suppliers.create');
             Route::post('/proveedores', 'storeSupplier')->name('suppliers.store');
             Route::get('/compras', 'purchases')->name('purchases.index');
             Route::get('/compras/crear', 'createPurchase')->name('purchases.create');
             Route::post('/compras', 'storePurchase')->name('purchases.store');
+            Route::patch('/compras/{purchase:id_compra}/entregar', 'deliverPurchase')->name('purchases.deliver');
             Route::get('/ventas', 'sales')->name('sales.index');
+            Route::get('/ventas/crear', 'createSale')->name('sales.create');
+            Route::post('/ventas', 'storeSale')->name('sales.store');
             Route::get('/inventario', 'inventory')->name('inventory.index');
             Route::get('/reportes', 'reports')->name('reports.index');
         });

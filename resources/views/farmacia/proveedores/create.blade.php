@@ -36,13 +36,15 @@
 
                 <div class="flex gap-3 lg:justify-end">
                     <a
-                        href="{{ route('farmacia.index') }}"
+                        href="{{ route('farmacia.suppliers.index') }}"
                         class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
                     >
-                        Volver a farmacia
+                        Volver a proveedores
                     </a>
                 </div>
             </div>
+
+            @include('farmacia.compras.partials.navigation', ['current' => 'suppliers.index'])
 
             <form method="POST" action="{{ route('farmacia.suppliers.store') }}" class="mt-8 grid gap-6 lg:grid-cols-2">
                 @csrf
@@ -64,7 +66,7 @@
 
                 <div>
                     <label for="correo" class="text-sm font-medium text-[#0b1b57]">Correo del proveedor</label>
-                    <p class="mt-1 text-xs text-[#0b1b57]/60">Este campo es opcional, pero ayuda a futuras comunicaciones.</p>
+                    <p class="mt-1 text-xs text-[#0b1b57]/60">Este campo es opcional y ahora se guarda directamente en el proveedor.</p>
                     <input
                         id="correo"
                         name="correo"
@@ -80,7 +82,7 @@
 
                 <div>
                     <label for="telefono" class="text-sm font-medium text-[#0b1b57]">Telefono del proveedor</label>
-                    <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el numero principal de contacto del proveedor. El sistema lo guardara como telefono principal.</p>
+                    <p class="mt-1 text-xs text-[#0b1b57]/60">Ingresa el numero principal de contacto del proveedor.</p>
                     <input
                         id="telefono"
                         name="telefono"
@@ -133,7 +135,7 @@
                         Guardar proveedor
                     </button>
                     <a
-                        href="{{ route('farmacia.index') }}"
+                        href="{{ route('farmacia.suppliers.index') }}"
                         class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
                     >
                         Cancelar

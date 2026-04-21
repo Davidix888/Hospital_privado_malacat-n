@@ -22,7 +22,7 @@ class StoreSupplierRequest extends FormRequest
                 Rule::unique('proveedor', 'nombre'),
             ],
             'direccion' => ['required', 'string', 'max:150'],
-            'correo' => ['nullable', 'email', 'max:120', Rule::unique('correo_proveedor', 'correo')],
+            'correo' => ['nullable', 'email', 'max:120', Rule::unique('proveedor', 'correo')],
             'telefono' => ['required', 'string', 'max:30'],
             'estado' => ['required', 'boolean'],
         ];

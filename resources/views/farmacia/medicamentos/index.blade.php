@@ -30,8 +30,8 @@
                     <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Farmacia</p>
                     <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Catalogo de medicamentos</h1>
                     <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                        Administra los medicamentos, categorias, presentaciones, precio de venta y stock minimo que luego
-                        se usan en compras e inventario.
+                        Administra los medicamentos, categorias, presentaciones, precio de venta, stock minimo y disponibilidad
+                        que luego se usan en compras e inventario.
                     </p>
                 </div>
 
@@ -50,6 +50,8 @@
                     </a>
                 </div>
             </div>
+
+            @include('farmacia.compras.partials.navigation', ['current' => 'medicines.index'])
 
             <form method="GET" action="{{ route('farmacia.medicines.index') }}" class="mt-8 grid gap-4 lg:grid-cols-3">
                 <input
@@ -89,12 +91,13 @@
                 <table class="w-full table-fixed border border-[#0b1b57]/10 text-sm text-[#0b1b57]">
                     <thead class="bg-[#0b1b57] text-white">
                         <tr>
-                            <th class="w-[22%] px-4 py-3 text-center font-semibold align-middle">Medicamento</th>
-                            <th class="w-[18%] px-4 py-3 text-center font-semibold align-middle">Categoria</th>
-                            <th class="w-[16%] px-4 py-3 text-center font-semibold align-middle">Presentacion</th>
+                            <th class="w-[20%] px-4 py-3 text-center font-semibold align-middle">Medicamento</th>
+                            <th class="w-[16%] px-4 py-3 text-center font-semibold align-middle">Categoria</th>
+                            <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Presentacion</th>
                             <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Precio venta</th>
-                            <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Stock minimo</th>
-                            <th class="w-[16%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
+                            <th class="w-[12%] px-4 py-3 text-center font-semibold align-middle">Stock minimo</th>
+                            <th class="w-[12%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
+                            <th class="w-[12%] px-4 py-3 text-center font-semibold align-middle">Accion</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,10 +113,18 @@
                                         {{ $item->estado ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </td>
+                                <td class="px-4 py-3 text-center align-middle">
+                                    <a
+                                        href="{{ route('farmacia.medicines.edit', $item) }}"
+                                        class="inline-flex items-center justify-center rounded-[1rem] border border-[#0b1b57]/20 px-3 py-2 text-xs font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                                    >
+                                        Editar
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-[#0b1b57]/70">
+                                <td colspan="7" class="px-4 py-6 text-center text-[#0b1b57]/70">
                                     No hay medicamentos registrados con los filtros indicados.
                                 </td>
                             </tr>

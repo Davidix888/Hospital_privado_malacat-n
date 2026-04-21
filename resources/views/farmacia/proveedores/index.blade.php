@@ -50,6 +50,8 @@
                 </div>
             </div>
 
+            @include('farmacia.compras.partials.navigation', ['current' => 'suppliers.index'])
+
             <form method="GET" action="{{ route('farmacia.suppliers.index') }}" class="mt-8 grid gap-4 lg:grid-cols-3">
                 <input
                     name="q"
@@ -100,8 +102,8 @@
                             <tr class="border-t border-[#0b1b57]/10 bg-white">
                                 <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->nombre }}</td>
                                 <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->direccion }}</td>
-                                <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->email?->correo ?? 'Sin correo' }}</td>
-                                <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->phone?->numero ?? 'Sin telefono' }}</td>
+                                <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->contact_email ?? 'Sin correo' }}</td>
+                                <td class="px-4 py-3 text-center align-middle break-words">{{ $supplier->contact_phone ?? 'Sin telefono' }}</td>
                                 <td class="px-4 py-3 text-center align-middle">
                                     <span class="{{ $supplier->estado ? 'text-emerald-600' : 'text-red-600' }}">
                                         {{ $supplier->estado ? 'Activo' : 'Inactivo' }}

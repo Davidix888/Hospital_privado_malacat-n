@@ -22,7 +22,7 @@ class StorePurchaseRequest extends FormRequest
             'numero_lote' => ['required', 'string', 'max:80'],
             'fecha_ingreso' => ['required', 'date'],
             'fecha_vencimiento' => ['required', 'date', 'after_or_equal:fecha_ingreso'],
-            'estado' => ['required', 'boolean'],
+            'estado_entrega' => ['required', 'in:pendiente,entregada'],
         ];
     }
 
@@ -40,7 +40,8 @@ class StorePurchaseRequest extends FormRequest
             'fecha_ingreso.required' => 'Debes indicar la fecha de ingreso al inventario.',
             'fecha_vencimiento.required' => 'Debes indicar la fecha de vencimiento.',
             'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento no puede ser menor que la fecha de ingreso.',
-            'estado.required' => 'Debes seleccionar el estado de la compra.',
+            'estado_entrega.required' => 'Debes seleccionar el estado de entrega de la compra.',
+            'estado_entrega.in' => 'El estado de entrega seleccionado no es valido.',
         ];
     }
 }
