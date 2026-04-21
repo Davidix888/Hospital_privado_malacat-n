@@ -11,12 +11,20 @@
     <body class="min-h-screen bg-[#f3f6fb] font-sans text-[#0b1b57]">
         @php
             $notificationMessage = session('error');
+            $notificationMessages = collect();
             $notificationTitle = null;
             $notificationClasses = null;
             $notificationButtonClasses = null;
 
             if (session('error') || $errors->any()) {
-                $notificationMessage = $notificationMessage ?? 'Revisa los datos del formulario antes de guardar.';
+                $notificationMessages = $notificationMessages
+                    ->when(session('error'), fn ($messages) => $messages->push(session('error')))
+                    ->merge($errors->all())
+                    ->filter(fn ($message) => filled($message))
+                    ->unique()
+                    ->values();
+
+                $notificationMessage = session('error') ?: 'Revisa los datos del formulario antes de guardar.';
                 $notificationTitle = session('error_title', 'No se pudo completar la acción');
                 $notificationClasses = 'border-red-200 bg-red-50 text-red-700';
                 $notificationButtonClasses = 'text-red-700/70 hover:text-red-700';
@@ -69,6 +77,13 @@
                                 <div class="space-y-1">
                                     <p class="font-semibold">{{ $notificationTitle }}</p>
                                     <p>{{ $notificationMessage }}</p>
+                                    @if ($notificationMessages->count() > 1)
+                                        <ul class="space-y-1 pt-1 text-xs">
+                                            @foreach ($notificationMessages->skip(1) as $message)
+                                                <li>{{ $message }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </div>
                                 <button
                                     type="button"

@@ -112,7 +112,12 @@ class UserManagementTest extends TestCase
     public function test_administrator_can_deactivate_another_user(): void
     {
         $admin = $this->createAdministrator();
-        $user = User::factory()->create();
+        $role = Role::factory()->create([
+            'nombre' => 'Farmacia',
+        ]);
+        $user = User::factory()->create([
+            'id_rol' => $role->id_rol,
+        ]);
 
         $response = $this->actingAs($admin)->patch('/usuarios/'.$user->id_usuario.'/desactivar');
 

@@ -46,6 +46,11 @@ class MedicinePresentation extends Model
         return $this->hasMany(PurchaseDetail::class, 'id_medicamento_presentacion', 'id_medicamento_presentacion');
     }
 
+    public function saleDetails(): HasMany
+    {
+        return $this->hasMany(SaleDetail::class, 'id_medicamento_presentacion', 'id_medicamento_presentacion');
+    }
+
     public function getDisplayNameAttribute(): string
     {
         $medicine = $this->medicine?->nombre ?? 'Medicamento';

@@ -19,6 +19,7 @@ class Purchase extends Model
         'id_usuario',
         'fecha',
         'total',
+        'estado_entrega',
         'estado',
     ];
 
@@ -27,6 +28,7 @@ class Purchase extends Model
         return [
             'fecha' => 'datetime',
             'total' => 'decimal:2',
+            'estado_entrega' => 'string',
             'estado' => 'boolean',
         ];
     }
@@ -49,5 +51,25 @@ class Purchase extends Model
     public function getItemsCountAttribute(): int
     {
         return (int) $this->details->sum('cantidad');
+    }
+
+    public function getIsDeliveredAttribute(): bool
+    {
+        return $this->estado_entrega === 'entregada';
+    }
+
+    public function getDeliveryLabelAttribute(): string
+    {
+        return $this->is_delivered ? 'Entregada' : 'Pendiente';
+    }
+
+    public function getDeliveryTextClassAttribute(): string
+    {
+        return $this->is_delivered ? 'text-emerald-600' : 'text-amber-600';
+    }
+
+    public function getSystemStatusLabelAttribute(): string
+    {
+        return $this->estado ? 'Activa' : 'Inactiva';
     }
 }

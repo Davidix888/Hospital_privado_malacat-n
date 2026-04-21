@@ -1,19 +1,145 @@
-<x-layouts.panel title="Modulo de ventas">
-    <section style="padding-top: 1.25rem;">
-        <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8" style="margin-top: 0.75rem;">
-            <div class="space-y-3">
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Ventas</p>
-                <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">
-                    Modulo de ventas de farmacia
-                </h1>
-                <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
-                    Este espacio queda preparado para registrar ventas, descontar stock y consultar el historial de salidas
-                    de medicamentos dentro de farmacia.
-                </p>
+<x-layouts.panel title="Ventas de farmacia">
+    <section style="padding-top: 2rem;">
+        @if (session('status'))
+            <div
+                id="sale-success-popup"
+                class="fixed right-6 top-24 z-50 max-w-sm border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 shadow-xl"
+            >
+                <div class="flex items-start justify-between gap-4">
+                    <div class="space-y-1">
+                        <p class="font-semibold">Operacion completada</p>
+                        <p>{{ session('status') }}</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="text-lg font-semibold leading-none text-emerald-700/70 transition hover:text-emerald-700"
+                        onclick="document.getElementById('sale-success-popup')?.remove()"
+                    >
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <script>
+                setTimeout(() => document.getElementById('sale-success-popup')?.remove(), 5000);
+            </script>
+        @endif
+
+        <div class="border border-[#0b1b57]/10 bg-white p-6 shadow-sm sm:p-8">
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#d71920]">Farmacia</p>
+                    <h1 class="font-['Outfit'] text-3xl font-bold text-[#0b1b57] sm:text-4xl">Ventas registradas</h1>
+                    <p class="max-w-3xl text-sm leading-6 text-[#0b1b57]/70 sm:text-base">
+                        Consulta las ventas realizadas con paciente, medicamento, usuario responsable, cantidad despachada y total vendido.
+                    </p>
+                </div>
+
+                <div class="flex gap-3 lg:justify-end">
+                    <a
+                        href="{{ route('farmacia.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Volver a farmacia
+                    </a>
+                    <a
+                        href="{{ route('farmacia.inventory.index') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Ver inventario
+                    </a>
+                    <a
+                        href="{{ route('farmacia.sales.create') }}"
+                        class="inline-flex h-fit items-center justify-center whitespace-nowrap rounded-[1.2rem] bg-[#0b1b57] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10256f]"
+                    >
+                        Registrar venta
+                    </a>
+                </div>
             </div>
 
-            <div class="mt-8 border border-[#0b1b57]/10 bg-[#f4f7fb] p-6 text-sm text-[#0b1b57]">
-                La funcionalidad operativa de ventas se implementar&aacute; en el siguiente bloque del m&oacute;dulo.
+            <form method="GET" action="{{ route('farmacia.sales.index') }}" class="mt-8 grid gap-4 lg:grid-cols-3">
+                <input
+                    name="q"
+                    type="text"
+                    value="{{ $filters['q'] ?? '' }}"
+                    class="border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
+                    placeholder="Buscar por paciente, medicamento o usuario"
+                >
+
+                <select
+                    name="estado"
+                    class="border border-[#0b1b57]/15 bg-white px-4 py-3 text-sm text-[#0b1b57] outline-none"
+                >
+                    <option value="">Todos los estados</option>
+                    <option value="activo" @selected(($filters['estado'] ?? '') === 'activo')>Activas</option>
+                    <option value="inactivo" @selected(($filters['estado'] ?? '') === 'inactivo')>Inactivas</option>
+                </select>
+
+                <div class="flex gap-3">
+                    <button
+                        type="submit"
+                        class="rounded-[1.2rem] bg-[#0b1b57] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10256f]"
+                    >
+                        Buscar
+                    </button>
+                    <a
+                        href="{{ route('farmacia.sales.index') }}"
+                        class="rounded-[1.2rem] border border-[#0b1b57]/20 px-5 py-3 text-sm font-semibold text-[#0b1b57] transition hover:bg-[#0b1b57]/5"
+                    >
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+
+            <div class="mt-8 w-full overflow-x-auto">
+                <table class="w-full table-fixed border border-[#0b1b57]/10 text-sm text-[#0b1b57]">
+                    <thead class="bg-[#0b1b57] text-white">
+                        <tr>
+                            <th class="w-[14%] px-4 py-3 text-center font-semibold align-middle">Fecha</th>
+                            <th class="w-[18%] px-4 py-3 text-center font-semibold align-middle">Paciente</th>
+                            <th class="w-[24%] px-4 py-3 text-center font-semibold align-middle">Medicamento</th>
+                            <th class="w-[15%] px-4 py-3 text-center font-semibold align-middle">Usuario</th>
+                            <th class="w-[12%] px-4 py-3 text-center font-semibold align-middle">Cantidad</th>
+                            <th class="w-[10%] px-4 py-3 text-center font-semibold align-middle">Total</th>
+                            <th class="w-[7%] px-4 py-3 text-center font-semibold align-middle">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($sales as $sale)
+                            @php
+                                $detailLabels = $sale->details
+                                    ->map(fn ($detail) => trim($detail->medicine_name.' - '.$detail->presentation_name))
+                                    ->filter()
+                                    ->unique()
+                                    ->values();
+                            @endphp
+                            <tr class="border-t border-[#0b1b57]/10 bg-white">
+                                <td class="px-4 py-3 text-center align-middle">{{ optional($sale->fecha)->format('d/m/Y H:i') }}</td>
+                                <td class="px-4 py-3 text-center align-middle break-words">{{ $sale->patient?->full_name ?? 'Sin paciente' }}</td>
+                                <td class="px-4 py-3 text-center align-middle break-words">
+                                    {{ $detailLabels->isNotEmpty() ? $detailLabels->implode(', ') : 'Sin detalle registrado' }}
+                                </td>
+                                <td class="px-4 py-3 text-center align-middle break-words">{{ $sale->user?->username ?? 'Sin usuario' }}</td>
+                                <td class="px-4 py-3 text-center align-middle">{{ $sale->items_count }}</td>
+                                <td class="px-4 py-3 text-center align-middle">Q {{ number_format((float) $sale->total, 2) }}</td>
+                                <td class="px-4 py-3 text-center align-middle">
+                                    <span class="{{ $sale->estado ? 'text-emerald-600' : 'text-red-600' }}">
+                                        {{ $sale->estado ? 'Activa' : 'Inactiva' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-4 py-6 text-center text-[#0b1b57]/70">
+                                    No hay ventas registradas con los filtros indicados.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6">
+                {{ $sales->links() }}
             </div>
         </div>
     </section>

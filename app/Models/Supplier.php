@@ -17,6 +17,8 @@ class Supplier extends Model
     protected $fillable = [
         'nombre',
         'direccion',
+        'correo',
+        'telefono',
         'estado',
     ];
 
@@ -40,5 +42,15 @@ class Supplier extends Model
     public function phone(): HasOne
     {
         return $this->hasOne(SupplierPhone::class, 'id_proveedor', 'id_proveedor');
+    }
+
+    public function getContactEmailAttribute(): ?string
+    {
+        return $this->correo ?: $this->email?->correo;
+    }
+
+    public function getContactPhoneAttribute(): ?string
+    {
+        return $this->telefono ?: $this->phone?->numero;
     }
 }
